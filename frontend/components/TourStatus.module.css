@@ -1,0 +1,157 @@
+.container {
+    background: var(--background-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Progress bar */
+.progressBar {
+    height: 4px;
+    background: var(--surface);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 0.5s ease;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.statusIcon {
+    font-size: 1.25rem;
+}
+
+.statusLabel {
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--foreground-muted);
+}
+
+.progressText {
+    font-size: 0.875rem;
+    color: var(--foreground-muted);
+}
+
+/* Stop info */
+.stopInfo {
+    padding: 1rem 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.stopTitle {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--foreground-muted);
+    margin-bottom: 0.5rem;
+}
+
+.stopName {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--foreground);
+    margin-bottom: 0.25rem;
+}
+
+.stopAddress {
+    font-size: 0.875rem;
+    color: var(--foreground-muted);
+}
+
+.nextStop {
+    font-size: 0.8rem;
+    color: var(--foreground-muted);
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border);
+}
+
+/* Actions */
+.actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.primaryBtn {
+    flex: 1;
+}
+
+.secondaryBtn {
+    flex-shrink: 0;
+}
+
+/* Demo toggle */
+.demoToggle {
+    padding-top: 0.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--foreground-muted);
+}
+
+.toggle input {
+    display: none;
+}
+
+.toggleSlider {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    transition: all var(--transition-fast);
+}
+
+.toggleSlider::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    background: var(--foreground-muted);
+    border-radius: 50%;
+    transition: all var(--transition-fast);
+}
+
+.toggle input:checked+.toggleSlider {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.toggle input:checked+.toggleSlider::after {
+    left: 18px;
+    background: white;
+}

@@ -1,0 +1,492 @@
+[
+    {
+        "id": "poi_001",
+        "name": "Rhode Island State House",
+        "coordinates": [
+            41.8305784,
+            -71.4147225
+        ],
+        "address": "82 Smith St, Providence, RI 02903",
+        "poi_type": "government_building",
+        "themes": [
+            "historical",
+            "art"
+        ],
+        "facts": [
+            "Completed in 1904 after 15 years of construction",
+            "Features the fourth largest self-supported marble dome in the world",
+            "Designed by the prestigious firm McKim, Mead & White",
+            "The original Rhode Island Charter of 1663 is displayed here",
+            "The Independent Man statue atop the dome stands 11 feet tall"
+        ],
+        "narration_hooks": {
+            "historical": "Welcome to the Rhode Island State House, a magnificent symbol of democracy that took over 15 years to construct. This Georgian-style marvel was designed by McKim, Mead and White, the same architects who gave us Penn Station in New York.",
+            "art": "Feast your eyes on this architectural masterpiece! The State House features the world's fourth-largest self-supported marble dome, a stunning achievement of engineering and artistry inspired by St. Peter's Basilica in Rome.",
+            "ghost": "They say the halls of power never truly sleep. Late at night, security guards report hearing footsteps echoing through the marble corridors... footsteps that belong to no living person."
+        },
+        "interactive_questions": [
+            "Can you guess how many pieces of marble were used in the dome?",
+            "What do you notice about the Independent Man statue at the very top?",
+            "Why do you think Rhode Island chose such an elaborate building for its State House?"
+        ],
+        "estimated_duration": 10,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Rhode_Island_State_House"
+    },
+    {
+        "id": "poi_002",
+        "name": "Benefit Street",
+        "coordinates": [
+            41.8251624,
+            -71.4061788
+        ],
+        "address": "Benefit Street, Providence, RI 02903",
+        "poi_type": "historic_district",
+        "themes": [
+            "historical",
+            "ghost"
+        ],
+        "facts": [
+            "Known as the 'Mile of History' with over 200 preserved colonial buildings",
+            "One of the largest concentrations of colonial architecture in America",
+            "Home to the Providence Athenaeum where Poe courted Sarah Helen Whitman",
+            "Many houses date back to the 1700s",
+            "The street was originally called 'Back Street' before being renamed"
+        ],
+        "narration_hooks": {
+            "historical": "You're now walking along Benefit Street, affectionately known as the Mile of History. Imagine horse-drawn carriages rolling past these very facades in the 1700s. Each doorway here has witnessed centuries of American history.",
+            "art": "Benefit Street is a living museum of architectural styles. Notice how Georgian, Federal, Greek Revival, and Victorian buildings stand side by side, each telling the story of its era through brick, wood, and decorative flourishes.",
+            "ghost": "Welcome to one of America's most haunted streets. Every old house here harbors secrets. That creaking you hear? Perhaps it's just the old wood settling... or perhaps not. Edgar Allan Poe himself walked these cobblestones, seeking inspiration in the darkness."
+        },
+        "interactive_questions": [
+            "Which architectural style catches your eye the most?",
+            "Can you spot any original colonial features on these buildings?",
+            "If these walls could talk, what stories do you think they'd tell?"
+        ],
+        "estimated_duration": 12,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Benefit_Street"
+    },
+    {
+        "id": "poi_003",
+        "name": "First Baptist Church in America",
+        "coordinates": [
+            41.8274385,
+            -71.4083074
+        ],
+        "address": "75 N Main St, Providence, RI 02903",
+        "poi_type": "religious_building",
+        "themes": [
+            "historical"
+        ],
+        "facts": [
+            "Founded by Roger Williams in 1638",
+            "The oldest Baptist congregation in America",
+            "Current building dates to 1775 and features a 185-foot steeple",
+            "Designed by Joseph Brown, a prominent colonial architect",
+            "The church played a key role in establishing religious freedom in America"
+        ],
+        "narration_hooks": {
+            "historical": "Before you stands a beacon of religious freedom. Roger Williams founded this congregation in 1638 after being banished from Massachusetts for his radical idea that church and state should be separate. This building has witnessed nearly 400 years of American faith.",
+            "art": "The steeple reaching 185 feet into the sky is considered one of the finest examples of Georgian church architecture in America. Joseph Brown drew inspiration from designs by Christopher Wren and James Gibbs.",
+            "ghost": "Centuries of prayers have echoed in this sanctuary. Some say on quiet nights, you can still hear the hymns of congregations long passed, drifting through the empty pews like whispers from another time."
+        },
+        "interactive_questions": [
+            "What do you think made Roger Williams' ideas so revolutionary for his time?",
+            "Can you count how many windows are on the steeple?",
+            "How has this building influenced American values of religious freedom?"
+        ],
+        "estimated_duration": 8,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/First_Baptist_Church_in_America"
+    },
+    {
+        "id": "poi_004",
+        "name": "Providence Athenaeum",
+        "coordinates": [
+            41.8258348,
+            -71.4063268
+        ],
+        "address": "251 Benefit St, Providence, RI 02903",
+        "poi_type": "library",
+        "themes": [
+            "historical",
+            "art",
+            "ghost"
+        ],
+        "facts": [
+            "One of the oldest libraries in America, founded in 1836",
+            "Edgar Allan Poe courted Sarah Helen Whitman here",
+            "Houses rare books including a first edition of Audubon's Birds of America",
+            "H.P. Lovecraft was a frequent visitor",
+            "Still operates as a membership library today"
+        ],
+        "narration_hooks": {
+            "historical": "Step into the Providence Athenaeum, where knowledge has been treasured since 1836. In these very aisles, Edgar Allan Poe wandered, seeking both books and the affection of poet Sarah Helen Whitman. Their ill-fated romance played out among these shelves.",
+            "art": "This Greek Revival temple to literature houses treasures beyond imagination. Original Audubon prints, ancient manuscripts, and centuries of human thought line these walls. The architecture itself is a work of art worthy of the treasures within.",
+            "ghost": "Two of literature's darkest minds haunted these halls. Poe's tortured spirit and Lovecraft's cosmic horror were both nurtured here. Some say Lovecraft's ghost still browses the occult section on moonless nights, searching for forbidden knowledge."
+        },
+        "interactive_questions": [
+            "What book would you hope to find on these shelves?",
+            "Can you imagine Poe and Lovecraft browsing these same aisles?",
+            "Why do you think libraries like this inspired such dark imaginations?"
+        ],
+        "estimated_duration": 10,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Providence_Athenaeum"
+    },
+    {
+        "id": "poi_005",
+        "name": "John Brown House Museum",
+        "coordinates": [
+            41.8231595,
+            -71.4033311
+        ],
+        "address": "52 Power St, Providence, RI 02906",
+        "poi_type": "historic_house",
+        "themes": [
+            "historical"
+        ],
+        "facts": [
+            "Built in 1788 for merchant John Brown",
+            "John Quincy Adams called it 'the most magnificent mansion in North America'",
+            "John Brown was both a patriot and a controversial slave trader",
+            "Features original 18th-century furnishings and decorative arts",
+            "Now operated by the Rhode Island Historical Society"
+        ],
+        "narration_hooks": {
+            "historical": "John Quincy Adams once called this the most magnificent mansion in North America. Built in 1788, this Georgian masterpiece tells the complicated story of John Brown\u2014Revolutionary patriot, industrial pioneer, and yes, slave trader. History here is not simple; it's human.",
+            "art": "Every room in the John Brown House is a time capsule of 18th-century decorative arts. The original wallpapers, furnishings, and silver work transport you directly to the world of colonial luxury and craftsmanship.",
+            "ghost": "Wealth has its shadows. The Brown fortune was built on trade, including the slave trade. Some nights, visitors report an inexplicable chill in certain rooms, as if the house itself remembers its complicated past."
+        },
+        "interactive_questions": [
+            "How should we remember historical figures who did both great and terrible things?",
+            "What objects in a home tell us the most about its inhabitants?",
+            "Do you think historic houses like this should present uncomfortable truths?"
+        ],
+        "estimated_duration": 12,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/John_Brown_House_(Providence)"
+    },
+    {
+        "id": "poi_006",
+        "name": "RISD Museum",
+        "coordinates": [
+            41.8268961,
+            -71.40744339999999
+        ],
+        "address": "224 Benefit St, Providence, RI 02903",
+        "poi_type": "museum",
+        "themes": [
+            "art"
+        ],
+        "facts": [
+            "Houses over 100,000 works spanning 5,000 years",
+            "Features works by Monet, Manet, Picasso, and Warhol",
+            "Home to one of the largest Egyptian collections in the US",
+            "Free admission on Sundays",
+            "Connected to one of the top art schools in the world"
+        ],
+        "narration_hooks": {
+            "historical": "This museum represents Rhode Island School of Design's commitment to making art accessible. Since 1877, it has grown to house over 100,000 works\u2014from ancient Egyptian artifacts to cutting-edge contemporary installations.",
+            "art": "Welcome to one of America's finest art museums. From Monet's water lilies to Egyptian mummies, from Roman sculptures to contemporary masterpieces\u2014five thousand years of human creativity awaits you in these galleries.",
+            "ghost": "Museums at night are mysterious places. Guards speak of strange sounds in the ancient art galleries, as if pieces from past civilizations carry more than just history. Those Egyptian eyes seem to follow you..."
+        },
+        "interactive_questions": [
+            "If you could take one work of art home, which would you choose?",
+            "What conversation would you have with an artist across time?",
+            "How does seeing original artworks differ from seeing reproductions?"
+        ],
+        "estimated_duration": 15,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/RISD_Museum"
+    },
+    {
+        "id": "poi_007",
+        "name": "Providence Performing Arts Center",
+        "coordinates": [
+            41.82106719999999,
+            -71.4119609
+        ],
+        "address": "220 Weybosset St, Providence, RI 02903",
+        "poi_type": "theater",
+        "themes": [
+            "art"
+        ],
+        "facts": [
+            "Originally opened in 1928 as Loew's State Theatre",
+            "Seats 3,100 people in its ornate auditorium",
+            "Restored in 1977 after nearly being demolished",
+            "Features an original Mighty Wurlitzer organ",
+            "Hosts Broadway tours, concerts, and special events"
+        ],
+        "narration_hooks": {
+            "historical": "In 1928, movie palaces were cathedrals of entertainment. This theater welcomed audiences with the promise of glamour and escape. Though it nearly met the wrecking ball in the 1970s, visionaries saved this monument to the golden age of cinema.",
+            "art": "Prepare to have your breath taken away. The Providence Performing Arts Center is a masterpiece of theatrical design\u2014ornate gold leaf, crimson velvet, and the kind of dramatic grandeur that makes every performance feel like an event.",
+            "ghost": "Like all old theaters, PPAC has its phantoms. Performers speak of a presence in the wings, footsteps in empty hallways, and the feeling of being watched from the balcony seats. The show must go on... even for audiences unseen."
+        },
+        "interactive_questions": [
+            "What performance would you most like to see in a venue like this?",
+            "Why do you think people worked so hard to save this building?",
+            "Can you imagine what opening night in 1928 must have been like?"
+        ],
+        "estimated_duration": 8,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Providence_Performing_Arts_Center"
+    },
+    {
+        "id": "poi_008",
+        "name": "WaterFire",
+        "coordinates": [
+            41.8274486,
+            -71.4139414
+        ],
+        "address": "Waterplace Park, Providence, RI 02903",
+        "poi_type": "art_installation",
+        "themes": [
+            "art"
+        ],
+        "facts": [
+            "Created by Barnaby Evans in 1994",
+            "Features 100 bonfires floating on the Providence rivers",
+            "Attracts over 1 million visitors annually",
+            "Spawned WaterFire installations in other cities",
+            "Combines fire, music, and performance art"
+        ],
+        "narration_hooks": {
+            "historical": "What began as a temporary art installation in 1994 became Providence's signature event. Barnaby Evans envisioned fire dancing on water, and the city embraced it as a symbol of urban renaissance.",
+            "art": "WaterFire is participatory art on a grand scale. When those 100 braziers ignite at sunset, something magical happens. The fire reflects on the water, ancient music fills the air, and thousands of strangers become an audience together.",
+            "ghost": "Fire has always been humanity's ward against darkness. As the flames dance on the water, shadows play strange tricks. Some say at the height of WaterFire, the barrier between worlds grows thin..."
+        },
+        "interactive_questions": [
+            "What emotions does fire on water evoke for you?",
+            "How does public art change the way we experience a city?",
+            "Would you like to learn about founding artist Barnaby Evans?"
+        ],
+        "estimated_duration": 10,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/WaterFire"
+    },
+    {
+        "id": "poi_009",
+        "name": "AS220",
+        "coordinates": [
+            41.8216772,
+            -71.41592159999999
+        ],
+        "address": "115 Empire St, Providence, RI 02903",
+        "poi_type": "art_space",
+        "themes": [
+            "art"
+        ],
+        "facts": [
+            "Founded in 1985 as an unjuried, uncensored art space",
+            "Provides affordable live/work space for artists",
+            "Features galleries, performance venues, and a restaurant",
+            "Has nurtured thousands of artists over four decades",
+            "Represents the DIY spirit of Providence's art scene"
+        ],
+        "narration_hooks": {
+            "historical": "In 1985, a group of artists had a radical idea: what if there was a space where any artist could show their work, no jury, no censorship? AS220 was born, and it helped transform downtown Providence into an arts destination.",
+            "art": "This is where Providence's creative heart beats loudest. AS220 is unjuried and uncensored\u2014anyone can exhibit, anyone can perform. It's raw, it's real, and it's been launching artistic careers for nearly 40 years.",
+            "ghost": "Creativity and madness have always danced together. In a space that has seen decades of artistic expression, emotion soaks into the walls. Some artists report their best work here comes from inspiration they can't quite explain..."
+        },
+        "interactive_questions": [
+            "What art would you create if you knew no one would judge it?",
+            "How important is an unjuried space for emerging artists?",
+            "What role do you think artist-run spaces play in a city's culture?"
+        ],
+        "estimated_duration": 8,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/AS220"
+    },
+    {
+        "id": "poi_010",
+        "name": "Federal Hill",
+        "coordinates": [
+            41.8234818,
+            -71.4251897
+        ],
+        "address": "Atwells Ave, Providence, RI 02903",
+        "poi_type": "neighborhood",
+        "themes": [
+            "art",
+            "historical"
+        ],
+        "facts": [
+            "Providence's Little Italy since the late 1800s",
+            "Gateway arch features La Pigna (the pine cone), symbol of abundance",
+            "Home to some of the best Italian restaurants outside Italy",
+            "The neighborhood was a hub for organized crime in the mid-20th century",
+            "Now a vibrant dining and arts destination"
+        ],
+        "narration_hooks": {
+            "historical": "Welcome to Federal Hill, Providence's Little Italy. When Italian immigrants arrived in the late 1800s, they brought their traditions, their recipes, and their dreams. That pine cone at the arch? It's La Pigna, a symbol of abundance and welcome.",
+            "art": "Federal Hill is a feast for all senses. The aroma of fresh pasta, the colorful murals, the animated conversations spilling from trattorias\u2014this neighborhood is living art, a celebration of Italian-American culture.",
+            "ghost": "Behind the charm of Little Italy lies a shadowy past. In the mid-20th century, powerful figures held court in these restaurants. Some say their spirits still linger, protective of the neighborhood they once ruled..."
+        },
+        "interactive_questions": [
+            "What's your favorite Italian dish?",
+            "How do immigrant neighborhoods preserve culture across generations?",
+            "What stories might these old buildings tell if they could speak?"
+        ],
+        "estimated_duration": 10,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Federal_Hill,_Providence,_Rhode_Island"
+    },
+    {
+        "id": "poi_011",
+        "name": "Swan Point Cemetery",
+        "coordinates": [
+            41.85214209999999,
+            -71.38392180000001
+        ],
+        "address": "585 Blackstone Blvd, Providence, RI 02906",
+        "poi_type": "cemetery",
+        "themes": [
+            "ghost",
+            "art"
+        ],
+        "facts": [
+            "Designed as a 'rural cemetery' in 1846",
+            "Final resting place of H.P. Lovecraft",
+            "Features Victorian sculpture and elaborate monuments",
+            "Overlooks the Seekonk River",
+            "Many famous Rhode Islanders are buried here"
+        ],
+        "narration_hooks": {
+            "historical": "Victorian Americans created 'rural cemeteries' as peaceful places for the living as much as the dead. Swan Point, established in 1846, was designed for contemplative walks among beautiful monuments and ancient trees.",
+            "art": "Swan Point is an open-air gallery of Victorian funerary art. Angels with magnificent wings, elaborate obelisks, and moss-covered Celtic crosses create a landscape where art meets mortality.",
+            "ghost": "Here lies Howard Phillips Lovecraft, master of cosmic horror. Fans leave offerings at his grave\u2014coins, small squid figurines, notes. Some say that on certain nights, something stirs in the old part of the cemetery, where the ancient trees grow thickest..."
+        },
+        "interactive_questions": [
+            "Why do you think Lovecraft's grave attracts so many visitors?",
+            "What would you want your memorial to say about you?",
+            "How does the art of a cemetery reflect its era's views on death?"
+        ],
+        "estimated_duration": 12,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Swan_Point_Cemetery"
+    },
+    {
+        "id": "poi_012",
+        "name": "Prospect Terrace Park",
+        "coordinates": [
+            41.8311427,
+            -71.4070945
+        ],
+        "address": "Congdon St, Providence, RI 02906",
+        "poi_type": "park",
+        "themes": [
+            "historical",
+            "ghost"
+        ],
+        "facts": [
+            "Features a statue of Roger Williams overlooking the city",
+            "Roger Williams' remains were moved here in 1939",
+            "Offers panoramic views of downtown Providence",
+            "Popular spot for proposals and photography",
+            "Named one of the best urban viewpoints in New England"
+        ],
+        "narration_hooks": {
+            "historical": "From this hilltop, Roger Williams surveys the city he founded on principles of religious freedom and fair dealing with Native Americans. His actual remains rest beneath this monument, moved here in 1939 to this commanding overlook.",
+            "art": "The statue of Roger Williams is a masterpiece of civic sculpture, but the real art here is the view. Downtown Providence spreads before you like a postcard, with the State House dome gleaming in the distance.",
+            "ghost": "They say Roger Williams watches over Providence still. Visitors at dusk report a strange sense of being observed from behind the statue. Perhaps the founder still takes pride in his city... or perhaps he worries about its future."
+        },
+        "interactive_questions": [
+            "What do you think Roger Williams would think of modern Providence?",
+            "Can you spot the State House dome from here?",
+            "Why do you think this spot was chosen for his memorial?"
+        ],
+        "estimated_duration": 8,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Prospect_Terrace_Park"
+    },
+    {
+        "id": "poi_013",
+        "name": "Old State House",
+        "coordinates": [
+            41.8291496,
+            -71.4086856
+        ],
+        "address": "150 Benefit St, Providence, RI 02903",
+        "poi_type": "historic_building",
+        "themes": [
+            "historical",
+            "ghost"
+        ],
+        "facts": [
+            "Built in 1762, making it one of the oldest state houses in America",
+            "Rhode Island declared independence here on May 4, 1776, two months before the Declaration of Independence",
+            "George Washington visited here in 1781",
+            "Now houses the Rhode Island Heritage Commission",
+            "Featured original colonial architecture and interior"
+        ],
+        "narration_hooks": {
+            "historical": "On May 4, 1776\u2014two full months before the Declaration of Independence\u2014Rhode Island declared its freedom from British rule in this very building. The smallest colony was often the boldest. Freedom rang here first!",
+            "art": "This Georgian brick building is colonial architecture distilled to its essence. Simple, dignified, purposeful\u2014it was built to govern, not to impress, yet it impresses all the same with its historical weight.",
+            "ghost": "Revolutions are born in rooms like these. The voices of patriots planning treason against the Crown once echoed off these walls. On quiet nights, some say you can still hear the heated debates about liberty and the future of a new nation."
+        },
+        "interactive_questions": [
+            "Why do you think Rhode Island declared independence before the other colonies?",
+            "What makes this building feel different from modern government buildings?",
+            "Can you imagine the tension in these rooms in 1776?"
+        ],
+        "estimated_duration": 8,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Old_State_House_(Providence,_Rhode_Island)"
+    },
+    {
+        "id": "poi_014",
+        "name": "College Hill",
+        "coordinates": [
+            41.8267718,
+            -71.4025482
+        ],
+        "address": "Brown University, Providence, RI 02912",
+        "poi_type": "historic_district",
+        "themes": [
+            "historical",
+            "ghost"
+        ],
+        "facts": [
+            "Home to Brown University, founded in 1764",
+            "Features well-preserved 18th and 19th century architecture",
+            "H.P. Lovecraft set many stories in this neighborhood",
+            "RISD's campus is located here",
+            "Named for the hills where the colleges are located"
+        ],
+        "narration_hooks": {
+            "historical": "College Hill has been the intellectual heart of Providence since Brown University opened in 1764. Generations of students have walked these streets, from the colonial era through the revolutionary period and into the modern age of innovation.",
+            "art": "This neighborhood is where academia meets bohemia. Brown University's historic buildings mix with RISD's creative energy, and the architecture spans centuries\u2014from colonial to modern, each building a chapter in Providence's story.",
+            "ghost": "H.P. Lovecraft was born and died in this neighborhood, and he set many of his most disturbing tales on these very streets. 'The Shunned House' on Benefit Street, 'The Case of Charles Dexter Ward'\u2014fiction or veiled confession? Some streets here feel... watched."
+        },
+        "interactive_questions": [
+            "Have you ever read any H.P. Lovecraft?",
+            "What do you think makes college towns unique?",
+            "Can you feel the creative energy of this neighborhood?"
+        ],
+        "estimated_duration": 12,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/College_Hill,_Providence"
+    },
+    {
+        "id": "poi_015",
+        "name": "The Arcade",
+        "coordinates": [
+            41.8239052,
+            -71.4105015
+        ],
+        "address": "65 Weybosset St, Providence, RI 02903",
+        "poi_type": "shopping_arcade",
+        "themes": [
+            "historical",
+            "art"
+        ],
+        "facts": [
+            "Built in 1828, it's the oldest indoor shopping mall in America",
+            "Features Greek Revival architecture with massive granite columns",
+            "Now contains micro-loft apartments on upper floors",
+            "National Historic Landmark since 1976",
+            "Each side was designed by a different architect"
+        ],
+        "narration_hooks": {
+            "historical": "Welcome to America's first shopping mall! Built in 1828, this Greek Revival masterpiece pioneered the concept of multiple shops under one roof. Those massive granite columns? They weigh 13 tons each and were hauled here by oxen.",
+            "art": "The Arcade is architectural audacity. Massive Greek columns frame a three-story skylit atrium in a style that was cutting-edge in 1828. Fun fact: each side was designed by a different architect who couldn't agree, resulting in two different but harmonious facades.",
+            "ghost": "Nearly 200 years of commerce, conversation, and human drama have unfolded under this glass roof. Shopkeepers report objects moving on their own, shadows in the upper galleries, and the sense of crowds passing even when the arcade is empty."
+        },
+        "interactive_questions": [
+            "How does shopping here feel different from a modern mall?",
+            "Can you spot the differences between the two architectural facades?",
+            "What do you think this place looked like in 1828?"
+        ],
+        "estimated_duration": 8,
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Westminster_Arcade"
+    }
+]

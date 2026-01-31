@@ -1,0 +1,227 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--background);
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: var(--background-glass);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.backBtn {
+    background: none;
+    border: none;
+    color: var(--foreground);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.backBtn:hover {
+    background: var(--surface);
+}
+
+.tourInfo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.themeBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Main layout */
+.main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 0;
+    min-height: 0;
+}
+
+@media (max-width: 900px) {
+    .main {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+    }
+
+    .sidebar {
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+}
+
+/* Map container */
+.mapContainer {
+    position: relative;
+    height: calc(100vh - 60px);
+    min-height: 400px;
+}
+
+.mapPlaceholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    background: var(--background-secondary);
+    color: var(--foreground-muted);
+}
+
+/* Current stop card overlay */
+.currentStopCard {
+    position: absolute;
+    bottom: 2rem;
+    left: 2rem;
+    right: 2rem;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--background-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stopNumber {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: var(--primary);
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.stopDetails h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.stopDetails p {
+    font-size: 0.8rem;
+    color: var(--foreground-muted);
+    margin: 0;
+}
+
+/* Sidebar */
+.sidebar {
+    background: var(--background-secondary);
+    border-left: 1px solid var(--border);
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Error display */
+.error {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius-md);
+    color: #ef4444;
+    font-size: 0.875rem;
+}
+
+.error button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 0.75rem;
+    text-decoration: underline;
+}
+
+/* Loading overlay */
+.loadingOverlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    background: var(--background-glass);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Theme-specific styling */
+.container.theme-historical .themeBadge {
+    border-color: var(--theme-historical);
+    color: var(--theme-historical);
+}
+
+.container.theme-art .themeBadge {
+    border-color: var(--theme-art);
+    color: var(--theme-art);
+}
+
+.container.theme-ghost .themeBadge {
+    border-color: var(--theme-ghost);
+    color: var(--theme-ghost);
+}

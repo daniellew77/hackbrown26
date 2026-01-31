@@ -1,0 +1,287 @@
+.mapContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.map {
+    width: 100%;
+    height: 100%;
+}
+
+/* Loading state */
+.loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    background: var(--background-secondary);
+    color: var(--foreground-muted);
+}
+
+.loadingSpinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* POI Markers - fixed positioning */
+.marker {
+    position: relative;
+    cursor: pointer;
+    /* Anchor at bottom center of marker */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.markerInner {
+    width: 36px;
+    height: 36px;
+    background: var(--background-secondary);
+    border: 3px solid var(--theme-color, var(--primary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+    /* Prevent transform issues */
+    transform-origin: center center;
+    position: relative;
+    z-index: 2;
+}
+
+.markerInner:hover {
+    transform: scale(1.15);
+}
+
+.markerCurrent {
+    background: var(--theme-color, var(--primary));
+    transform: scale(1.2);
+}
+
+.markerCurrent .markerNumber {
+    color: white;
+}
+
+.markerPast {
+    opacity: 0.5;
+    border-style: dashed;
+}
+
+.markerNumber {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--foreground);
+}
+
+.markerPulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    /* Use margin instead of transform for positioning */
+    margin-top: -25px;
+    margin-left: -25px;
+    animation: pulse 2s ease-out infinite;
+}
+
+.markerCurrent~.markerPulse {
+    opacity: 0.4;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.5);
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* User location marker - fixed positioning */
+.userMarker {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+}
+
+.userMarkerDot {
+    width: 16px;
+    height: 16px;
+    background: #3b82f6;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+    position: relative;
+    z-index: 2;
+}
+
+.userMarkerPulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    background: rgba(59, 130, 246, 0.3);
+    border-radius: 50%;
+    z-index: 1;
+    margin-top: -20px;
+    margin-left: -20px;
+    animation: userPulse 2s ease-out infinite;
+}
+
+@keyframes userPulse {
+    0% {
+        transform: scale(0.5);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Popup styling */
+.popup :global(.mapboxgl-popup-content) {
+    background: var(--background-secondary);
+    color: var(--foreground);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border);
+}
+
+.popup :global(.mapboxgl-popup-tip) {
+    border-top-color: var(--background-secondary);
+}
+
+.popup h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.popup p {
+    font-size: 0.8rem;
+    color: var(--foreground-muted);
+    margin: 0;
+}
+
+/* 3D View Controls */
+.viewControls {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    background: var(--background-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 180px;
+    z-index: 10;
+}
+
+.controlGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.controlGroup label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.controlGroup span {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--foreground-muted);
+}
+
+.slider {
+    width: 100%;
+    height: 6px;
+    background: var(--surface);
+    border-radius: var(--radius-full);
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--primary);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.4);
+    transition: transform 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--primary);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+.resetViewBtn {
+    padding: 0.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--foreground-muted);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.resetViewBtn:hover {
+    background: var(--surface-hover);
+    color: var(--foreground);
+}
