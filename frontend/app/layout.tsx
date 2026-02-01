@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wanderlust",
+  title: "WanderBlobs",
   description: "Created by the WanderBlobs for H@B26",
 };
 

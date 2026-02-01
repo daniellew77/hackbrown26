@@ -33,23 +33,21 @@ class QAAgent(BaseAgent):
         current_stop: POIStop, 
         preferences: UserPreferences,
         history: list[dict]
-    ) -> str:
-        """Generate an answer using RAG knowledge."""
+    ) -> tuple[str, str]:
+        """Generate an answer using RAG knowledge. Returns (answer, context)."""
         
         # 1. Fetch External Knowledge (Wikipedia + Maps)
-        # Search for knowledge about the current stop OR keywords in the question
-        query = f"{current_stop.name} {question}" if current_stop else question
         wiki_info = self.knowledge_service.search_wikipedia(current_stop.name if current_stop else question)
         
         # Format conversation history
         recent_history = history[-6:] if history else []
         history_text = "\n".join([f"{msg['role']}: {msg['content']}" for msg in recent_history])
         
-        poi_context = f"At: {current_stop.name}" if current_stop else "Walking"
+        poi_context_label = f"At: {current_stop.name}" if current_stop else "Walking"
         
         prompt = f"""
         You are a tour guide with a {preferences.guide_personality.value} personality.
-        User is at {poi_context}.
+        User is at {poi_context_label}.
         
         REAL WORLD KNOWLEDGE:
         {wiki_info}
@@ -63,4 +61,5 @@ class QAAgent(BaseAgent):
         Don't be overly enthusiastic or performative. Just be helpful.
         """
         
-        return await self.ai.generate_content(prompt)
+        answer = await self.ai.generate_content(prompt)
+        return answer, wiki_info

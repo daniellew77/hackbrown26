@@ -1,0 +1,58 @@
+{
+  "qa_tests": [
+    {
+      "poi_name": "RISD Museum",
+      "query": "What can I see at RISD Museum?",
+      "type": "QA"
+    },
+    {
+      "poi_name": "Prospect Terrace Park",
+      "query": "Tell me something interesting about Prospect Terrace Park.",
+      "type": "QA"
+    },
+    {
+      "poi_name": "Federal Hill",
+      "query": "What can I see at Federal Hill?",
+      "type": "QA"
+    },
+    {
+      "poi_name": "Swan Point Cemetery",
+      "query": "Tell me something interesting about Swan Point Cemetery.",
+      "type": "QA"
+    },
+    {
+      "poi_name": "Providence Athenaeum",
+      "query": "Is Providence Athenaeum worth visiting?",
+      "type": "QA"
+    }
+  ],
+  "replan_tests": [
+    {
+      "current_location": [
+        41.8274385,
+        -71.4083074
+      ],
+      "query": "Skip this stop.",
+      "expected_action": "skip_stop",
+      "type": "REPLAN"
+    },
+    {
+      "current_location": [
+        41.8234818,
+        -71.4251897
+      ],
+      "query": "That's a beautiful building!",
+      "expected_action": "CHAT",
+      "type": "REPLAN"
+    },
+    {
+      "current_location": [
+        41.8239052,
+        -71.4105015
+      ],
+      "query": "I'm hungry, find me some food.",
+      "expected_action": "find_place",
+      "type": "REPLAN"
+    }
+  ]
+}
