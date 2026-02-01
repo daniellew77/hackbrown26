@@ -11,6 +11,7 @@ from pathlib import Path
 
 from models.state import TourManager, TourStatus
 from services.routing import generate_route, get_walking_directions, check_poi_proximity
+from config import get_config
 
 router = APIRouter(tags=["tour"])
 
@@ -121,8 +122,9 @@ async def create_tour(request: CreateTourRequest):
         "interactive": request.interactive
     })
     
-    # Default to Providence center if no start location
-    start_coords = tuple(request.start_location) if request.start_location else (41.8240, -71.4128)
+    # Default to Configured Location if no start location
+    config = get_config()
+    start_coords = tuple(request.start_location) if request.start_location else config.default_start_location
     tour.current_location = start_coords
     
 

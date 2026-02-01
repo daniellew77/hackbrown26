@@ -10,7 +10,10 @@ from services.knowledge import KnowledgeService
 from services.routing import haversine_distance, generate_route
 from agents.base import BaseAgent
 from models.state import POIStop, TourState
+from agents.base import BaseAgent
+from models.state import POIStop, TourState
 from typing import List, Optional
+from config import get_config
 
 class TourDirectorAgent(BaseAgent):
     def __init__(self):
@@ -147,7 +150,7 @@ class TourDirectorAgent(BaseAgent):
         if action == "change_theme":
             # REGENERATE ROUTE
             print(f"🔄 Regenerating route for theme: {query}")
-            current_loc = tour.current_location or (41.8240, -71.4128)
+            current_loc = tour.current_location or get_config().default_start_location
             
             # Calculate remaining time
             elapsed_minutes = (datetime.now() - tour.created_at).seconds / 60
@@ -184,7 +187,7 @@ class TourDirectorAgent(BaseAgent):
 
         elif action == "find_place" and query:
             # Search for nearby places
-            current_loc = tour.current_location or (41.8240, -71.4128)  # Default Providence
+            current_loc = tour.current_location or get_config().default_start_location
             places = await self.find_nearby_places(query, current_loc)
             
             if places:

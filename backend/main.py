@@ -14,6 +14,7 @@ import os
 load_dotenv()
 
 from routes.tour import router as tour_router
+from routes.admin import router as admin_router
 from models.state import TourManager
 
 # Global tour manager instance
@@ -46,6 +47,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(tour_router, prefix="/api")
+app.include_router(admin_router, prefix="/api")
 
 
 @app.get("/health")

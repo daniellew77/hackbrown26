@@ -111,7 +111,7 @@ const initialPreferences: UserPreferences = {
     guidePersonality: 'henry',
     interactive: true,
     ttsEnabled: true,
-    continuousListening: true,
+    continuousListening: false,
 };
 
 const initialState: TourState = {

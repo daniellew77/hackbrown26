@@ -85,8 +85,6 @@ class NarratorAgent(BaseAgent):
         
         If there are specific facts known about this place, weave them in naturally.
         End with a thought-provoking question or a transition to the next step (which involves walking).
-
-        For the time being, keep your response to be just one short brief sentence. This is for testing. 
         """
         
         return await self.ai.generate_content(prompt)
