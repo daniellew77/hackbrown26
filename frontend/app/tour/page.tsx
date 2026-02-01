@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { useTourStore, selectCurrentStop, selectProgressCurrent, selectProgressTotal } from '@/store/tour';
+import { useTourStore, selectCurrentStop, selectNextStop, selectProgressCurrent, selectProgressTotal } from '@/store/tour';
 import { useGeolocation } from '@/hooks/useGeolocation';
-import TourStatus from '@/components/TourStatus';
 import LocationSimulator from '@/components/LocationSimulator';
 import NarrationCard from '@/components/NarrationCard';
 import ChatInterface from '@/components/ChatInterface';
@@ -25,10 +24,14 @@ const Map = dynamic(() => import('@/components/Map'), {
 
 export default function TourPage() {
     const router = useRouter();
-    const { tourId, status, preferences, route, setRoute, isLoading, error, setLoading, setError, currentLocation } = useTourStore();
+    const { tourId, status, preferences, route, setRoute, setStatus, advanceStop, isLoading, error, setLoading, setError } = useTourStore();
     const currentStop = useTourStore(selectCurrentStop);
+    const nextStop = useTourStore(selectNextStop);
     const progressCurrent = useTourStore(selectProgressCurrent);
     const progressTotal = useTourStore(selectProgressTotal);
+
+    const [chatExpanded, setChatExpanded] = useState(false);
+    const [showIntro, setShowIntro] = useState(true);  // Show intro overlay initially
 
     // Enable geolocation tracking
     useGeolocation();
@@ -38,7 +41,6 @@ export default function TourPage() {
         if (!tourId || !currentStop) return;
 
         const fetchWalkingDirections = async () => {
-            // Use current location or fallback to previous stop (or prov center)
             const startLoc = useTourStore.getState().currentLocation || [41.8240, -71.4128];
 
             try {
@@ -56,10 +58,7 @@ export default function TourPage() {
                     if (data.directions?.overview_polyline) {
                         const path = decodePolyline(data.directions.overview_polyline);
                         useTourStore.getState().setCurrentPath(path);
-                    } else if (data.directions?.steps) {
-                        // Only steps? might be fallback. 
-                        // Fallback logic in routing.py returns steps but no overview_polyline -> Map handles this by drawing straight line.
-                        // So just clear path.
+                    } else {
                         useTourStore.getState().setCurrentPath([]);
                     }
                 }
@@ -69,11 +68,10 @@ export default function TourPage() {
         };
 
         fetchWalkingDirections();
-    }, [tourId, currentStop?.id]); // Only re-run when the target stop changes
+    }, [tourId, currentStop?.id]);
 
     // Fetch route on mount if not already loaded
     useEffect(() => {
-        // Initialize location to Providence center for simulator
         if (!useTourStore.getState().currentLocation) {
             useTourStore.getState().updateLocation(41.8240, -71.4128);
         }
@@ -83,12 +81,22 @@ export default function TourPage() {
         }
     }, []);
 
+    // ESC key to go back home
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                router.push('/');
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [router]);
+
     const fetchRoute = async () => {
         setLoading(true);
         setError(null);
 
         try {
-            // Create a new tour and get the route
             const response = await fetch('http://localhost:8000/api/tour/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -105,7 +113,6 @@ export default function TourPage() {
 
             const data = await response.json();
 
-            // Transform backend response to frontend format
             const stops = data.tour.route.stops.map((stop: any) => ({
                 id: stop.id,
                 name: stop.name,
@@ -121,8 +128,6 @@ export default function TourPage() {
         } catch (err: any) {
             console.error('Error fetching route:', err);
             setError(err.message || 'Failed to generate tour route');
-
-            // Fallback: load sample stops for demo
             loadDemoRoute();
         } finally {
             setLoading(false);
@@ -146,7 +151,6 @@ export default function TourPage() {
 
             setRoute(stops);
         } catch {
-            // Use hardcoded fallback if API is down
             setRoute([
                 {
                     id: 'fallback_1',
@@ -170,39 +174,74 @@ export default function TourPage() {
         }
     };
 
+    // Tour action handlers
+    const syncAdvance = async () => {
+        if (!tourId) return;
+        try {
+            await fetch(`http://localhost:8000/api/tour/${tourId}/advance`, { method: 'POST' });
+        } catch (e) {
+            console.error('Failed to sync tour progress:', e);
+        }
+    };
+
+    const syncTransition = async (newStatus: string) => {
+        if (!tourId) return;
+        try {
+            await fetch(`http://localhost:8000/api/tour/${tourId}/transition`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ new_status: newStatus }),
+            });
+        } catch (e) {
+            console.error('Failed to sync tour status:', e);
+        }
+    };
+
+    const handleStart = () => {
+        setStatus('traveling');
+        syncTransition('traveling');
+    };
+
+    const handleSkip = () => {
+        advanceStop();
+        syncAdvance();
+    };
+
+    const handleArrive = () => {
+        setStatus('poi');
+        syncTransition('poi');
+    };
+
+    const handleContinue = () => {
+        advanceStop();
+        syncAdvance();
+        setStatus('traveling');
+        syncTransition('traveling');
+    };
+
+    const handleFinish = () => {
+        setStatus('complete');
+    };
+
     const handleBackToHome = () => {
         router.push('/');
     };
 
-    // Theme-specific styling
-    const themeClass = `theme-${preferences.theme}`;
-
     return (
-        <div className={`${styles.container} ${themeClass}`}>
-            {/* Header */}
-            <header className={styles.header}>
-                <button className={styles.backBtn} onClick={handleBackToHome}>
-                    ← Back
-                </button>
-                <div className={styles.tourInfo}>
-                    <span className={styles.themeBadge}>
-                        {preferences.theme === 'historical' && '🏛️'}
-                        {preferences.theme === 'art' && '🎨'}
-                        {preferences.theme === 'ghost' && '👻'}
-                        {preferences.theme.charAt(0).toUpperCase() + preferences.theme.slice(1)} Tour
-                    </span>
-                </div>
-            </header>
+        <div className={styles.container}>
+            {/* Fullscreen Map */}
+            <div className={styles.mapFullscreen}>
+                <Map />
+            </div>
 
-            {/* Main content */}
-            <main className={styles.main}>
-                {/* Map container */}
-                <div className={styles.mapContainer}>
-                    <Map />
 
-                    {/* Current stop card overlay */}
-                    {currentStop && status !== 'initial' && (
-                        <div className={styles.currentStopCard}>
+
+            {/* Top Left Panel - Stop Info & Actions (hidden during intro) */}
+            {!showIntro && (
+                <div className={styles.topLeftPanel}>
+                    {/* Current Stop Card */}
+                    {currentStop && (
+                        <div className={styles.stopCard}>
                             <div className={styles.stopNumber}>
                                 {progressCurrent}/{progressTotal}
                             </div>
@@ -212,33 +251,95 @@ export default function TourPage() {
                             </div>
                         </div>
                     )}
+
+                    {/* Action Buttons */}
+                    <div className={styles.actionButtons}>
+                        {status === 'initial' && (
+                            <button className={styles.primaryBtn} onClick={handleStart}>
+                                Start Tour
+                            </button>
+                        )}
+
+                        {status === 'traveling' && (
+                            <>
+                                <button className={styles.primaryBtn} onClick={handleArrive}>
+                                    I've Arrived
+                                </button>
+                                <button className={styles.secondaryBtn} onClick={handleSkip}>
+                                    Skip
+                                </button>
+                            </>
+                        )}
+
+                        {status === 'poi' && nextStop && (
+                            <button className={styles.primaryBtn} onClick={handleContinue}>
+                                Continue to Next Stop
+                            </button>
+                        )}
+
+                        {status === 'poi' && !nextStop && (
+                            <button className={styles.primaryBtn} onClick={handleFinish}>
+                                Finish Tour
+                            </button>
+                        )}
+
+                        {status === 'complete' && (
+                            <div className={styles.completeMessage}>
+                                Tour Complete!
+                            </div>
+                        )}
+                    </div>
                 </div>
+            )}
 
-                <aside className={styles.sidebar}>
-                    <TourStatus />
-                    <NarrationCard />
-                    <ChatInterface />
+            {/* Bottom Left - Location Simulator */}
+            {!showIntro && <LocationSimulator className={styles.bottomLeftSimulator} />}
 
-                    {/* Location simulator for testing */}
-                    <LocationSimulator />
+            {/* Intro Overlay backdrop - only the dimmed background */}
+            {showIntro && status === 'initial' && (
+                <div className={styles.introOverlay} onClick={() => setShowIntro(false)} />
+            )}
 
-                    {/* Error display */}
-                    {error && (
-                        <div className={styles.error}>
-                            <span>⚠️ {error}</span>
-                            <button onClick={() => setError(null)}>Dismiss</button>
-                        </div>
-                    )}
+            {/* Single NarrationCard - position changes based on showIntro */}
+            <div className={showIntro && status === 'initial' ? styles.introPanelCentered : styles.topRightPanel}>
+                <NarrationCard />
+                {showIntro && status === 'initial' && (
+                    <button
+                        className={styles.showRouteBtn}
+                        onClick={() => setShowIntro(false)}
+                    >
+                        Show me the route!
+                    </button>
+                )}
+            </div>
 
-                    {/* Loading state */}
-                    {isLoading && (
-                        <div className={styles.loadingOverlay}>
-                            <div className={styles.spinner} />
-                            <span>Generating your personalized tour...</span>
-                        </div>
-                    )}
-                </aside>
-            </main>
+            {/* Bottom Right - Chat (Expandable) */}
+            <div className={`${styles.chatPanel} ${chatExpanded ? styles.chatExpanded : ''}`}>
+                <button
+                    className={styles.chatToggle}
+                    onClick={() => setChatExpanded(!chatExpanded)}
+                >
+                    {chatExpanded ? '▼ Close Chat' : '▲ Open Chat'}
+                </button>
+                {chatExpanded && <ChatInterface />}
+            </div>
+
+            {/* Error display */}
+            {error && (
+                <div className={styles.errorOverlay}>
+                    <span>⚠️ {error}</span>
+                    <button onClick={() => setError(null)}>Dismiss</button>
+                </div>
+            )}
+
+            {/* Loading state */}
+            {isLoading && (
+                <div className={styles.loadingOverlay}>
+                    <div className={styles.spinner} />
+                    <span>Generating your personalized tour...</span>
+                </div>
+            )}
         </div>
     );
 }
+

@@ -5,12 +5,18 @@ import { useTourStore, selectCurrentStop } from '@/store/tour';
 import styles from './NarrationCard.module.css';
 import VoicePlayer from './VoicePlayer';
 
+import { CHARACTERS } from '@/constants/characters';
+
 export default function NarrationCard() {
-    const { tourId, status, setNarrating } = useTourStore();
+    const { tourId, status, setNarrating, preferences } = useTourStore();
     const currentStop = useTourStore(selectCurrentStop);
     const [narration, setNarration] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const character = CHARACTERS.find(c => c.id === preferences.guidePersonality) || CHARACTERS[0];
+    const guideName = character.name;
+    const guideAvatar = character.avatar;
 
     useEffect(() => {
         // Fetch narration if at a POI or at the very beginning (Initial)
@@ -57,9 +63,11 @@ export default function NarrationCard() {
     return (
         <div className={styles.card}>
             <div className={styles.header} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span className={styles.icon}>🤖</span>
-                    <h3>AI Guide</h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div className={styles.avatarContainer}>
+                        <img src={guideAvatar} alt={guideName} className={styles.avatarImg} />
+                    </div>
+                    <h3>{guideName}</h3>
                 </div>
                 {narration && <VoicePlayer text={narration} />}
             </div>
@@ -68,7 +76,7 @@ export default function NarrationCard() {
                 {isLoading ? (
                     <div className={styles.loading}>
                         <div className={styles.spinner}></div>
-                        <p>Generating personalized story...</p>
+                        <p>Bringing you info...</p>
                     </div>
                 ) : error ? (
                     <div className={styles.error}>
@@ -78,8 +86,8 @@ export default function NarrationCard() {
                 ) : (
                     <div className={styles.text}>
                         {narration.split('\n').map((paragraph, i) => {
-                            // Hide [SFX] tags from display
-                            const cleanText = paragraph.replace(/\[SFX:.*?\]/g, '').trim();
+                            // Hide bracketed tags from display (SFX, emotions, etc.)
+                            const cleanText = paragraph.replace(/\[.*?\]/g, '').trim();
                             return cleanText && <p key={i}>{cleanText}</p>
                         })}
                     </div>

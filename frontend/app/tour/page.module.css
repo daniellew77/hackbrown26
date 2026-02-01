@@ -1,83 +1,15 @@
+/* Fullscreen container */
 .container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: var(--background);
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
 }
 
-/* Header */
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--background-glass);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.backBtn {
-    background: none;
-    border: none;
-    color: var(--foreground);
-    font-size: 1rem;
-    cursor: pointer;
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
-}
-
-.backBtn:hover {
-    background: var(--surface);
-}
-
-.tourInfo {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.themeBadge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-full);
-    font-size: 0.875rem;
-    font-weight: 500;
-}
-
-/* Main layout */
-.main {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 360px;
-    gap: 0;
-    min-height: 0;
-}
-
-@media (max-width: 900px) {
-    .main {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr auto;
-    }
-
-    .sidebar {
-        max-height: 50vh;
-        overflow-y: auto;
-    }
-}
-
-/* Map container */
-.mapContainer {
-    position: relative;
-    height: calc(100vh - 60px);
-    min-height: 400px;
+/* Fullscreen Map */
+.mapFullscreen {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
 }
 
 .mapPlaceholder {
@@ -92,35 +24,52 @@
     color: var(--foreground-muted);
 }
 
-/* Current stop card overlay */
-.currentStopCard {
+/* Back Button */
+.backBtn {
     position: absolute;
-    bottom: 2rem;
-    left: 2rem;
-    right: 2rem;
-    max-width: 400px;
+    top: 1rem;
+    left: 1rem;
+    z-index: 100;
+    background: var(--background-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--foreground);
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.backBtn:hover {
+    background: var(--surface-hover);
+    border-color: var(--primary);
+}
+
+/* Top Left Panel - Stop Info & Actions */
+.topLeftPanel {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 320px;
+}
+
+.stopCard {
     display: flex;
     align-items: center;
     gap: 1rem;
     padding: 1rem 1.25rem;
     background: var(--background-glass);
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
-    animation: slideUp 0.4s ease;
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .stopNumber {
@@ -141,6 +90,7 @@
     font-size: 1rem;
     font-weight: 600;
     margin-bottom: 0.25rem;
+    color: var(--foreground);
 }
 
 .stopDetails p {
@@ -149,55 +99,173 @@
     margin: 0;
 }
 
-/* Sidebar */
-.sidebar {
-    background: var(--background-secondary);
-    border-left: 1px solid var(--border);
-    padding: 1.5rem;
-    overflow-y: auto;
+/* Action Buttons */
+.actionButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.primaryBtn {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.75rem 1.25rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-glow);
+}
+
+.primaryBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px var(--primary-glow);
+}
+
+.secondaryBtn {
+    padding: 0.75rem 1.25rem;
+    background: var(--background-glass);
+    backdrop-filter: blur(10px);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.secondaryBtn:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-hover);
+}
+
+.completeMessage {
+    padding: 1rem;
+    background: var(--background-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-lg);
+    color: var(--primary);
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Bottom Left - Location Simulator */
+.bottomLeftSimulator {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 50;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+    transform: scale(0.9);
+    transform-origin: bottom left;
+}
+
+.bottomLeftSimulator:hover {
+    opacity: 1;
+}
+
+/* Top Right Panel - Narration */
+.topRightPanel {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 50;
+    max-width: 350px;
+    width: 100%;
+}
+
+/* Bottom Right - Chat Panel */
+.chatPanel {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 50;
+    width: 350px;
+    max-height: 60vh;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    background: rgba(22, 22, 29, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all 0.3s ease;
 }
 
-/* Error display */
-.error {
+.chatExpanded {
+    max-height: 60vh;
+}
+
+.chatToggle {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--foreground);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.chatToggle:hover {
+    background: var(--surface-hover);
+}
+
+/* Error Overlay */
+.errorOverlay {
+    position: absolute;
+    bottom: 5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    background: rgba(239, 68, 68, 0.1);
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: rgba(239, 68, 68, 0.15);
+    backdrop-filter: blur(20px);
     border: 1px solid rgba(239, 68, 68, 0.3);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     color: #ef4444;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
 }
 
-.error button {
+.errorOverlay button {
     background: none;
     border: none;
     color: inherit;
     cursor: pointer;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     text-decoration: underline;
 }
 
-/* Loading overlay */
+/* Loading Overlay */
 .loadingOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 200;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    padding: 2rem;
-    background: var(--background-glass);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border);
+    gap: 1.5rem;
+    background: rgba(15, 15, 19, 0.9);
+    backdrop-filter: blur(10px);
 }
 
 .spinner {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     border: 3px solid var(--border);
     border-top-color: var(--primary);
     border-radius: 50%;
@@ -210,18 +278,96 @@
     }
 }
 
-/* Theme-specific styling */
-.container.theme-historical .themeBadge {
-    border-color: var(--theme-historical);
-    color: var(--theme-historical);
+/* Intro Overlay - just the backdrop */
+.introOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 140;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.5s ease-out;
+    cursor: pointer;
 }
 
-.container.theme-art .themeBadge {
-    border-color: var(--theme-art);
-    color: var(--theme-art);
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
-.container.theme-ghost .themeBadge {
-    border-color: var(--theme-ghost);
-    color: var(--theme-ghost);
+/* Centered panel for intro state */
+.introPanelCentered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 150;
+    max-width: 500px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.showRouteBtn {
+    padding: 1rem 2rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 30px var(--primary-glow);
+}
+
+.showRouteBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 40px var(--primary-glow);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .topLeftPanel {
+        max-width: calc(100% - 2rem);
+        right: 1rem;
+    }
+
+    .topRightPanel {
+        top: auto;
+        bottom: 4rem;
+        right: 1rem;
+        left: 1rem;
+        max-width: 100%;
+    }
+
+    .chatPanel {
+        left: 1rem;
+        width: calc(100% - 2rem);
+    }
+
+    .bottomLeftSimulator {
+        bottom: auto;
+        top: 1rem;
+        left: auto;
+        right: 4rem;
+    }
 }

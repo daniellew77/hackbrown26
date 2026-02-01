@@ -87,7 +87,7 @@ export default function ChatInterface() {
             <div className={styles.messages}>
                 {messages.length === 0 && (
                     <div className={styles.placeholder}>
-                        <p>👋 Ask me anything about the tour or this location!</p>
+                        <p>Ask me anything about the tour or this location!</p>
                     </div>
                 )}
 
@@ -97,7 +97,7 @@ export default function ChatInterface() {
                         className={`${styles.message} ${msg.role === 'user' ? styles.user : styles.assistant}`}
                     >
                         <div className={styles.bubble}>
-                            {msg.content}
+                            {msg.content.replace(/\[.*?\]/g, '').trim()}
                         </div>
                     </div>
                 ))}

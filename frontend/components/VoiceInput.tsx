@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { Mic, Square } from 'lucide-react';
 import styles from './VoiceInput.module.css';
 
 interface VoiceInputProps {
@@ -51,9 +52,9 @@ export default function VoiceInput({ onInput, onStart, onEnd, disabled }: VoiceI
 
                     // Provide helpful error messages
                     if (event.error === 'not-allowed') {
-                        alert("🎤 Microphone access denied. Please allow microphone access in your browser settings.");
+                        alert("Microphone access denied. Please allow microphone access in your browser settings.");
                     } else if (event.error === 'network') {
-                        alert("🌐 Network error. Speech recognition requires an internet connection. Try typing instead!");
+                        alert("Network error. Speech recognition requires an internet connection. Try typing instead!");
                     } else if (event.error === 'no-speech') {
                         // User didn't say anything - not an error
                     } else {
@@ -88,7 +89,8 @@ export default function VoiceInput({ onInput, onStart, onEnd, disabled }: VoiceI
             disabled={disabled}
             title="Speak to Guide"
         >
-            {isListening ? '🛑' : '🎤'}
+            {isListening ? <Square size={16} /> : <Mic size={18} />}
         </button>
     );
 }
+

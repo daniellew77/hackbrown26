@@ -53,32 +53,34 @@
 .title {
   font-size: clamp(2.5rem, 8vw, 4rem);
   margin-bottom: 1rem;
-  /* Grid layout to center the boundary between Explore and City */
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  /* Two equal columns */
-  width: 100%;
-  gap: 0.2em;
-  /* Small gap between words */
+  display: flex;
+  justify-content: center;
   align-items: baseline;
-  /* Align text baselines */
+  gap: 0.4rem;
 }
 
-/* Ensure right alignment for the left part (Explore) */
-.titleSpanLeft {
-  text-align: right;
+.cityNameWrapper {
+  position: relative;
+  display: inline-block;
 }
 
-/* Ensure left alignment for the right part (City) */
-.titleSpanRight {
-  text-align: left;
+.cityGhost {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.cityVisible {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
 }
 
 .highlight {
-  background: linear-gradient(135deg, var(--primary), #a855f7);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: rgb(211, 56, 141);
+  text-shadow: 0 0 40px rgba(193, 195, 235, 0.4);
 }
 
 .subtitle {
@@ -88,129 +90,341 @@
   line-height: 1.7;
 }
 
-/* Preferences section */
-.preferences {
+/* Wizard Styles */
+.wizardOverlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.wizardContainer {
   width: 100%;
+  max-width: 600px;
+  background: rgba(15, 15, 19, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 2rem;
+
+  /* Override global primary color to Hero Pink for local scope */
+  --primary: rgb(211, 56, 141);
+  --primary-hover: rgb(229, 94, 169);
+  --primary-glow: rgba(211, 56, 141, 0.3);
 }
 
-.section {
-  animation: fadeIn 0.6s ease forwards;
-  opacity: 0;
+.wizardHeader {
+  text-align: center;
 }
 
-.section:nth-child(1) {
-  animation-delay: 0.1s;
+.wizardTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--foreground);
 }
 
-.section:nth-child(2) {
-  animation-delay: 0.2s;
+.wizardSubtitle {
+  color: var(--foreground-muted);
+  font-size: 1rem;
 }
 
-.section:nth-child(3) {
-  animation-delay: 0.3s;
+.stepContent {
+  animation: slideIn 0.3s ease-out;
 }
 
-.section:nth-child(4) {
-  animation-delay: 0.4s;
-}
-
-@keyframes fadeIn {
+@keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateX(20px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
 }
 
-.sectionTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  color: var(--foreground-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+/* Circular Theme Layout */
+.circleContainer {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  margin: 0 auto;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Theme cards */
-.themeGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-
-@media (max-width: 600px) {
-  .themeGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.themeCard {
+.themeOrbitItem {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 130px;
+  height: 130px;
+  margin-left: -65px;
+  /* Half width */
+  margin-top: -65px;
+  /* Half height */
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.5rem 1rem;
-  background: var(--surface);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-lg);
+  justify-content: center;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  /* Circular buttons */
   cursor: pointer;
-  transition: all var(--transition-normal);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Transform is handled inline for rotation */
 }
 
-.themeCard:hover {
-  transform: translateY(-4px);
-  border-color: var(--border-hover);
-  box-shadow: var(--shadow-md);
+.themeOrbitItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary);
+  transform: scale(1.1);
+  /* Logic needs to preserve rotation, handled in React or distinct wrapper */
+  box-shadow: 0 0 20px rgba(211, 56, 141, 0.4);
+  z-index: 10;
 }
 
-.themeCardSelected {
-  border-color: var(--primary) !important;
-  box-shadow: var(--shadow-glow) !important;
+.themeOrbitItemSelected {
+  background: rgba(211, 56, 141, 0.2);
+  border-color: var(--primary);
+  box-shadow: 0 0 30px rgba(211, 56, 141, 0.3);
+  z-index: 10;
 }
 
-.themeIcon {
-  font-size: 2.5rem;
-  margin-bottom: 0.75rem;
+.themeIconWrapper {
+  margin-bottom: 0.25rem;
+  color: var(--primary);
 }
 
 .themeName {
+  font-size: 0.9rem;
   font-weight: 600;
-  font-size: 1rem;
   color: var(--foreground);
-  margin-bottom: 0.25rem;
+  line-height: 1.1;
 }
 
-.themeDesc {
-  font-size: 0.8rem;
-  color: var(--foreground-muted);
+.themeDescription {
+  display: none;
+  /* Hide description in dense circle view to keep it clean */
+}
+
+.centerInputContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+.centerInput {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(15, 15, 19, 0.8);
+  border: 2px solid var(--border);
+  color: var(--foreground);
   text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
 }
 
-/* Slider */
-.sliderContainer {
-  padding: 0.5rem 0;
+.centerInput:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 30px var(--primary-glow);
+  outline: none;
+  background: rgba(15, 15, 19, 0.95);
+  width: 160px;
+  /* Slight expansion on focus */
+  height: 160px;
 }
 
-.sliderLabels {
+.centerInput::placeholder {
+  color: var(--foreground-muted);
+  font-size: 0.8rem;
+}
+
+/* Character Orbit Items (for Pick Your Guide) */
+.characterOrbitItem {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 190px;
+  height: 190px;
+  margin-left: -95px;
+  margin-top: -95px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  padding: 0.5rem 1rem 1rem 1rem;
+  gap: 0.1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.characterOrbitItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 20px rgba(211, 56, 141, 0.4);
+  z-index: 10;
+}
+
+.characterOrbitItemSelected {
+  border-color: var(--primary);
+  background: var(--primary-glow);
+  box-shadow: 0 0 30px var(--primary-glow);
+  z-index: 10;
+}
+
+.characterAvatarContainer {
+  width: 132px;
+  height: 132px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.rem;
+}
+
+.characterAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.characterInitial {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.characterOrbitName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--foreground);
+  line-height: 1.1;
+}
+
+.characterOrbitTagline {
+  font-size: 0.7rem;
+  color: var(--foreground-muted);
+  line-height: 1.2;
+  max-width: 100px;
+}
+
+/* Center Start Button */
+.centerStartBtn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: none;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  z-index: 5;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 30px rgba(211, 56, 141, 0.4);
+}
+
+.centerStartBtn:hover:not(:disabled) {
+  transform: translate(-50%, -50%) scale(1.05);
+  box-shadow: 0 0 40px rgba(211, 56, 141, 0.6);
+}
+
+.centerStartBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Navigation */
+.wizardNavigation {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 0.75rem;
-  font-size: 0.875rem;
-  color: var(--foreground-muted);
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
 }
 
-.sliderValue {
-  font-weight: 600;
-  color: var(--primary);
-  font-size: 1rem;
+.backBtn {
+  background: none;
+  border: none;
+  color: var(--foreground-muted);
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  transition: all 0.2s;
 }
+
+.backBtn:hover {
+  color: var(--foreground);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nextBtn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-glow);
+}
+
+.nextBtn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+
 
 /* Personality grid */
 .personalityGrid {
@@ -241,7 +455,65 @@
 
 .personalityBtnSelected {
   border-color: var(--primary);
-  background: rgba(99, 102, 241, 0.1);
+  background: rgba(211, 56, 141, 0.1);
+}
+
+/* Character Cards (Step 2) */
+.characterGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.characterCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.25rem 1rem;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  gap: 0.3rem;
+}
+
+.characterCard:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
+  transform: translateY(-2px);
+}
+
+.characterCardSelected {
+  border-color: var(--primary);
+  background: rgba(211, 56, 141, 0.15);
+  box-shadow: 0 0 20px var(--primary-glow);
+}
+
+
+
+.characterEmoji {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+
+.characterName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.characterTagline {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.characterDescription {
+  font-size: 0.75rem;
+  color: var(--foreground-muted);
+  line-height: 1.3;
 }
 
 /* Toggle switches */
@@ -347,31 +619,51 @@
 
 /* NEW STYLES FOR REFACTOR */
 
+/* Hero section */
 .heroContainer {
+  position: fixed;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
   animation: fadeIn 0.8s ease-out;
+  cursor: pointer;
+  z-index: 10;
 }
 
-.heroBtn {
-  font-size: 1.25rem;
-  padding: 1.2rem 3.5rem;
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.hero {
+  text-align: center;
+  /* Remove margin to allow perfect centering */
+  margin-bottom: 0;
+  /* Push title slightly up visually if needed, or keeping centered is fine */
 }
 
-.heroBtn:hover {
-  box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
-  transform: translateY(-2px) scale(1.02);
+/* New Click to Start text */
+.clickToStart {
+  margin-top: 2rem;
+  font-size: 1.3rem;
+  color: var(--foreground-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  opacity: 3.0;
+  animation: pulse 2s infinite ease-in-out;
+  font-weight: 700;
 }
 
-.preferencesContainer {
-  width: 100%;
-  animation: fadeIn 0.5s ease-out forwards;
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
 }
+
+
 
 .backBtn {
   background: none;

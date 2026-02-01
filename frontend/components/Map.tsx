@@ -102,10 +102,7 @@ export default function Map({ className }: MapProps) {
             );
         });
 
-        // Navigation controls with pitch/rotation
-        map.current.addControl(new mapboxgl.NavigationControl({
-            visualizePitch: true, // Show pitch control
-        }), 'top-right');
+
 
         return () => {
             map.current?.remove();
@@ -211,55 +208,66 @@ export default function Map({ className }: MapProps) {
             });
         }
 
-        // Update route line
+        // Update route line based on tour status
         if (route.stops.length > 1) {
             let coordinates: number[][] = [];
 
-            // Use detailed Google Maps path if available
-            if (route.currentPath && route.currentPath.length > 0) {
+            if (status === 'initial') {
+                // Before tour starts: show overview path connecting all stops
+                coordinates = route.stops.map(stop => [stop.coordinates[1], stop.coordinates[0]]);
+            } else if (route.currentPath && route.currentPath.length > 0) {
+                // During tour: show detailed Google Maps walking path to current stop
                 // Mapbox expects [lng, lat], but store has [lat, lng]
                 coordinates = route.currentPath.map(p => [p[1], p[0]]);
             } else {
-                // Fallback: Straight lines between stops
-                coordinates = route.stops.map(stop => [stop.coordinates[1], stop.coordinates[0]]);
+                // Fallback when no path available: straight line to current stop
+                const currentStop = route.stops[route.currentStopIndex];
+                if (currentLocation && currentStop) {
+                    coordinates = [
+                        [currentLocation[1], currentLocation[0]],
+                        [currentStop.coordinates[1], currentStop.coordinates[0]]
+                    ];
+                }
             }
 
-            if (map.current.getSource('route')) {
-                (map.current.getSource('route') as mapboxgl.GeoJSONSource).setData({
-                    type: 'Feature',
-                    properties: {},
-                    geometry: {
-                        type: 'LineString',
-                        coordinates,
-                    },
-                });
-            } else {
-                map.current.addSource('route', {
-                    type: 'geojson',
-                    data: {
+            if (coordinates.length > 0) {
+                if (map.current.getSource('route')) {
+                    (map.current.getSource('route') as mapboxgl.GeoJSONSource).setData({
                         type: 'Feature',
                         properties: {},
                         geometry: {
                             type: 'LineString',
                             coordinates,
                         },
-                    },
-                });
+                    });
+                } else {
+                    map.current.addSource('route', {
+                        type: 'geojson',
+                        data: {
+                            type: 'Feature',
+                            properties: {},
+                            geometry: {
+                                type: 'LineString',
+                                coordinates,
+                            },
+                        },
+                    });
 
-                map.current.addLayer({
-                    id: 'route',
-                    type: 'line',
-                    source: 'route',
-                    layout: {
-                        'line-join': 'round',
-                        'line-cap': 'round',
-                    },
-                    paint: {
-                        'line-color': themeColor,
-                        'line-width': 5,
-                        'line-opacity': 0.8,
-                    },
-                }, 'poi-circles'); // Place below POI markers
+                    map.current.addLayer({
+                        id: 'route',
+                        type: 'line',
+                        source: 'route',
+                        layout: {
+                            'line-join': 'round',
+                            'line-cap': 'round',
+                        },
+                        paint: {
+                            'line-color': themeColor,
+                            'line-width': 5,
+                            'line-opacity': 0.8,
+                        },
+                    }, 'poi-circles'); // Place below POI markers
+                }
             }
         }
 
@@ -271,7 +279,7 @@ export default function Map({ className }: MapProps) {
             });
             map.current.fitBounds(bounds, { padding: 80, duration: 1000 });
         }
-    }, [route.stops, route.currentStopIndex, route.currentPath, preferences.theme, mapLoaded]);
+    }, [route.stops, route.currentStopIndex, route.currentPath, preferences.theme, mapLoaded, status, currentLocation]);
 
     // Update user location using native circle layer
     useEffect(() => {
@@ -345,40 +353,7 @@ export default function Map({ className }: MapProps) {
         <div className={`${styles.mapContainer} ${className || ''}`}>
             <div ref={mapContainer} className={styles.map} />
 
-            {/* 3D View Controls */}
-            {mapLoaded && (
-                <div className={styles.viewControls}>
-                    <div className={styles.controlGroup}>
-                        <label>
-                            <span>🎚️ Pitch (3D Tilt)</span>
-                            <input
-                                type="range"
-                                min="0"
-                                max="85"
-                                defaultValue="60"
-                                onChange={handlePitchChange}
-                                className={styles.slider}
-                            />
-                        </label>
-                    </div>
-                    <div className={styles.controlGroup}>
-                        <label>
-                            <span>🧭 Rotation</span>
-                            <input
-                                type="range"
-                                min="-180"
-                                max="180"
-                                defaultValue="-17"
-                                onChange={handleBearingChange}
-                                className={styles.slider}
-                            />
-                        </label>
-                    </div>
-                    <button className={styles.resetViewBtn} onClick={resetView}>
-                        ↺ Reset View
-                    </button>
-                </div>
-            )}
+
 
             {!mapLoaded && (
                 <div className={styles.loading}>

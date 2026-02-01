@@ -7,7 +7,7 @@ import { create } from 'zustand';
 
 // Types
 export type TourTheme = string;
-export type GuidePersonality = 'funny' | 'serious' | 'dramatic' | 'friendly';
+export type GuidePersonality = 'henry' | 'quentin' | 'drew' | 'autumn' | 'funny' | 'serious' | 'dramatic' | 'friendly';
 export type TourStatus = 'initial' | 'traveling' | 'poi' | 'complete';
 
 export interface UserPreferences {
@@ -101,7 +101,7 @@ const initialPreferences: UserPreferences = {
     tourLength: 60,
     theme: 'historical',
     soundEffects: true,
-    guidePersonality: 'friendly',
+    guidePersonality: 'henry',
     interactive: true,
     ttsEnabled: false,
 };

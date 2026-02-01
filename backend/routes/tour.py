@@ -24,8 +24,22 @@ import re
 
 def get_voice_for_tour(theme: str, personality: str) -> str:
     """Deterministically select a voice based on tour parameters."""
-    theme = theme.lower()
     personality = personality.lower()
+
+    # Explicit Character -> Voice ID mapping (bypasses fuzzy logic)
+    CHARACTER_VOICE_MAP = {
+        'henry': 'TxGEqnHWrfWFTfGW9XjX',    # Josh (Friendly Local)
+        'quentin': 'ErXwobaYiN019PkySvjV',  # Antoni (Professor)
+        'drew': '29vD33N1CtxCmqQRPOHJ',      # Drew (Explorer)
+        'autumn': 'EXAVITQu4vr4xnSDxMaL',    # Bella (Storyteller)
+    }
+
+    if personality in CHARACTER_VOICE_MAP:
+        print(f"🎤 Using character voice for '{personality}'")
+        return CHARACTER_VOICE_MAP[personality]
+
+    # Fallback to theme/personality-based fuzzy logic
+    theme = theme.lower()
     
     # Logic table
     if 'ghost' in theme or 'creepy' in personality:
@@ -375,7 +389,7 @@ async def generate_tour_audio(tour_id: str, request: AudioRequest):
 
     # Select dynamic voice based on tour "Character"
     voice_id = get_voice_for_tour(
-        tour.preferences.theme.value, 
+        tour.preferences.theme,  # theme is already a string
         tour.preferences.guide_personality.value
     )
 

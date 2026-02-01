@@ -9,12 +9,6 @@ interface UseGeolocationOptions {
     proximityThreshold?: number; // meters
 }
 
-interface GeolocationState {
-    isTracking: boolean;
-    error: string | null;
-    accuracy: number | null;
-}
-
 export function useGeolocation(options: UseGeolocationOptions = {}) {
     const {
         enableHighAccuracy = true,
@@ -22,79 +16,49 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
         proximityThreshold = 50,
     } = options;
 
-    const {
-        currentLocation,
-        updateLocation,
-        route,
-        status,
-        setStatus,
-        isDemoMode
-    } = useTourStore();
+    // Only subscribe to primitives that control flow, not reactive data
+    const status = useTourStore((state) => state.status);
+    const isDemoMode = useTourStore((state) => state.isDemoMode);
+    const currentLocation = useTourStore((state) => state.currentLocation);
 
     const watchIdRef = useRef<number | null>(null);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    // Check if user is near the current POI
-    const checkProximity = useCallback(async (lat: number, lng: number) => {
-        const currentStop = route.stops[route.currentStopIndex];
-        if (!currentStop || status !== 'traveling') return;
-
-        try {
-            const response = await fetch(`http://localhost:8000/api/tour/proximity-check`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    current_location: [lat, lng],
-                    poi_location: currentStop.coordinates,
-                    threshold: proximityThreshold,
-                }),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                if (data.is_near) {
-                    // Auto-transition to POI state when near
-                    setStatus('poi');
-                }
-            }
-        } catch (error) {
-            // Fallback: simple distance check
-            const latDiff = Math.abs(currentStop.coordinates[0] - lat);
-            const lngDiff = Math.abs(currentStop.coordinates[1] - lng);
-
-            // Rough check: ~0.0005 degrees ≈ 50 meters
-            if (latDiff < 0.0005 && lngDiff < 0.0005) {
-                setStatus('poi');
-            }
-        }
-    }, [route.stops, route.currentStopIndex, status, setStatus, proximityThreshold]);
-
-    // Handle position update
+    // Handle position update - use getState() inside to avoid stale closures
     const handlePosition = useCallback((position: GeolocationPosition) => {
-        const { latitude, longitude, accuracy } = position.coords;
+        const { latitude, longitude } = position.coords;
+        const store = useTourStore.getState();
 
-        updateLocation(latitude, longitude);
+        store.updateLocation(latitude, longitude);
 
         // Check if near POI
-        if (status === 'traveling') {
-            checkProximity(latitude, longitude);
+        if (store.status === 'traveling') {
+            const currentStop = store.route.stops[store.route.currentStopIndex];
+            if (currentStop) {
+                const latDiff = Math.abs(currentStop.coordinates[0] - latitude);
+                const lngDiff = Math.abs(currentStop.coordinates[1] - longitude);
+
+                // ~0.0005 degrees ≈ 50 meters
+                if (latDiff < 0.0005 && lngDiff < 0.0005) {
+                    store.setStatus('poi');
+                }
+            }
         }
-    }, [updateLocation, status, checkProximity]);
+    }, []); // No dependencies - uses getState() for fresh values
 
     // Handle geolocation error - silent since we have LocationSimulator
     const handleError = useCallback((error: GeolocationPositionError) => {
-        // Just log, don't show error to user since simulator works without GPS
         console.warn('Geolocation unavailable (using simulator instead):', error.message);
     }, []);
 
-    // Start tracking (real GPS - optional, simulator works without it)
+    // Start tracking (real GPS)
     const startTracking = useCallback(() => {
         if (!navigator.geolocation) {
             console.warn('Geolocation not supported - use Location Simulator');
             return;
         }
 
-        // Get initial position (silently fail if unavailable)
+        // Get initial position
         navigator.geolocation.getCurrentPosition(handlePosition, handleError, {
             enableHighAccuracy,
         });
@@ -123,35 +87,37 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
         }
     }, []);
 
-    // Demo mode: simulate walking
+    // Demo mode: simulate walking - uses getState() to avoid dependency issues
     const simulateWalking = useCallback(() => {
-        const currentStop = route.stops[route.currentStopIndex];
+        const store = useTourStore.getState();
+        const currentStop = store.route.stops[store.route.currentStopIndex];
         if (!currentStop) return;
 
-        // If we have a current location, move towards the POI
-        if (currentLocation) {
-            const [currentLat, currentLng] = currentLocation;
+        const currentLoc = store.currentLocation;
+
+        if (currentLoc) {
+            const [currentLat, currentLng] = currentLoc;
             const [targetLat, targetLng] = currentStop.coordinates;
 
             // Move 10% closer to target each update
             const newLat = currentLat + (targetLat - currentLat) * 0.1;
             const newLng = currentLng + (targetLng - currentLng) * 0.1;
 
-            updateLocation(newLat, newLng);
+            store.updateLocation(newLat, newLng);
 
             // Check if we're close enough
             const distance = Math.sqrt(
                 Math.pow(targetLat - newLat, 2) + Math.pow(targetLng - newLng, 2)
             );
 
-            if (distance < 0.0002 && status === 'traveling') {
-                setStatus('poi');
+            if (distance < 0.0002 && store.status === 'traveling') {
+                store.setStatus('poi');
             }
         } else {
             // Start near Providence center
-            updateLocation(41.8240, -71.4128);
+            store.updateLocation(41.8240, -71.4128);
         }
-    }, [route.stops, route.currentStopIndex, currentLocation, updateLocation, status, setStatus]);
+    }, []); // No dependencies - uses getState() for fresh values
 
     // Auto-start tracking when tour starts
     useEffect(() => {

@@ -157,7 +157,7 @@ export default function TourStatus({ className, onStartTour, onSkipStop }: TourS
             <div className={styles.actions}>
                 {status === 'initial' && (
                     <button className={`btn btn-primary ${styles.primaryBtn}`} onClick={handleStart}>
-                        🚀 Start Tour
+                        Start Tour
                     </button>
                 )}
 
@@ -174,7 +174,7 @@ export default function TourStatus({ className, onStartTour, onSkipStop }: TourS
 
                 {status === 'poi' && nextStop && (
                     <button className={`btn btn-primary ${styles.primaryBtn}`} onClick={handleContinue}>
-                        ➡️ Continue to Next Stop
+                        Continue to Next Stop
                     </button>
                 )}
 
@@ -188,18 +188,7 @@ export default function TourStatus({ className, onStartTour, onSkipStop }: TourS
                 )}
             </div>
 
-            {/* Demo mode toggle */}
-            <div className={styles.demoToggle}>
-                <label className={styles.toggle}>
-                    <input
-                        type="checkbox"
-                        checked={isDemoMode}
-                        onChange={toggleDemoMode}
-                    />
-                    <span className={styles.toggleSlider}></span>
-                    <span>Demo Mode</span>
-                </label>
-            </div>
+
         </div>
     );
 }

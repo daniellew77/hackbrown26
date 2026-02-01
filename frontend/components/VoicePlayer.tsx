@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useTourStore } from '@/store/tour';
+import { Volume2, Pause, AlertCircle } from 'lucide-react';
 import styles from './VoicePlayer.module.css';
 
 interface VoicePlayerProps {
@@ -165,15 +166,18 @@ export default function VoicePlayer({ text, autoplay = true, onEnded }: VoicePla
                 {isLoading ? (
                     <span className={styles.spinner} />
                 ) : isPlaying ? (
-                    <span className={styles.icon}>⏸️</span>
+                    <Pause size={18} />
                 ) : (
-                    <span className={styles.icon}>🔊</span>
+                    <Volume2 size={18} />
                 )}
             </button>
 
             {error && (
-                <span className={styles.error} title={error}>⚠️</span>
+                <span className={styles.error} title={error}>
+                    <AlertCircle size={16} />
+                </span>
             )}
         </div>
     );
 }
+

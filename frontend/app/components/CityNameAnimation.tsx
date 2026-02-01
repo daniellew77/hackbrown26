@@ -5,7 +5,7 @@ import styles from '../page.module.css';
 
 const DUMMY_CITIES = [
     'Paris', 'Tokyo', 'New York', 'London', 'Rome',
-    'Berlin', 'Sydney', 'Barcelona', 'Dubai', 'Amsterdam'
+    'Berlin', 'Sydney', 'Barcelona', 'Dubai', 'Amsterdam', 'Boston', 'Chicago', 'Los Angeles', 'San Francisco', 'Seattle', 'Miami', 'Denver', 'Houston', 'Philadelphia', 'Phoenix', 'San Antonio', 'San Diego', 'Dallas', 'San Jose', 'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'Charlotte', 'Indianapolis', 'San Francisco', 'Seattle', 'Miami', 'Denver', 'Houston', 'Philadelphia', 'Phoenix', 'San Antonio', 'San Diego', 'Dallas', 'San Jose', 'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'Charlotte', 'Indianapolis'
 ];
 
 interface CityNameAnimationProps {
@@ -19,7 +19,7 @@ export default function CityNameAnimation({ targetCity, className }: CityNameAni
 
     // Ref to track if we've received a non-default update or if enough time has passed
     const startTimeRef = useRef<number>(Date.now());
-    const MIN_ANIMATION_DURATION = 2000; // Run for at least 2 seconds
+    const MIN_ANIMATION_DURATION = 3500; // Run for at least 2 seconds
 
     useEffect(() => {
         // If we shouldn't animate or animation is done, just set the target
@@ -65,8 +65,15 @@ export default function CityNameAnimation({ targetCity, className }: CityNameAni
     }, [targetCity, isAnimating]);
 
     return (
-        <span className={className}>
-            {displayedCity}
+        <span className={styles.cityNameWrapper}>
+            {/* Ghost element determines the width based on TARGET city */}
+            <span className={`${className} ${styles.cityGhost}`} aria-hidden="true">
+                {targetCity}
+            </span>
+            {/* Visible element cycles through cities */}
+            <span className={`${className} ${styles.cityVisible}`}>
+                {displayedCity}
+            </span>
         </span>
     );
 }

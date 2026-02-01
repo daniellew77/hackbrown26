@@ -18,6 +18,12 @@ class TourTheme:
 
 
 class GuidePersonality(str, Enum):
+    # Character-based personalities
+    HENRY = "henry"
+    QUENTIN = "quentin"
+    DREW = "drew"
+    AUTUMN = "autumn"
+    # Legacy personality types
     FUNNY = "funny"
     SERIOUS = "serious"
     DRAMATIC = "dramatic"

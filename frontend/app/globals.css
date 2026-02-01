@@ -8,10 +8,10 @@
   --foreground: #e8e8ed;
   --foreground-muted: #8c8c9a;
 
-  /* Theme colors */
-  --primary: #6366f1;
-  --primary-hover: #818cf8;
-  --primary-glow: rgba(99, 102, 241, 0.3);
+  /* Theme colors - Pink to match landing page */
+  --primary: rgb(211, 56, 141);
+  --primary-hover: rgb(229, 94, 169);
+  --primary-glow: rgba(211, 56, 141, 0.3);
 
   /* Theme-specific accents */
   --theme-historical: #d4a574;
@@ -133,7 +133,7 @@ a:hover {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary), #8b5cf6);
+  background: linear-gradient(135deg, var(--primary), rgb(180, 50, 120));
   color: white;
   box-shadow: var(--shadow-glow);
 }
