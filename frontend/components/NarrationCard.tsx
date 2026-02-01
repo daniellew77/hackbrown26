@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useTourStore, selectCurrentStop } from '@/store/tour';
 import styles from './NarrationCard.module.css';
 import VoicePlayer from './VoicePlayer';
@@ -13,6 +13,7 @@ export default function NarrationCard() {
     const [narration, setNarration] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const isFetchingRef = useRef(false);
 
     useEffect(() => {
         console.log("📘 NarrationCard MOUNTED/UPDATED. Status:", status, "Stop:", currentStop?.id);
@@ -28,7 +29,10 @@ export default function NarrationCard() {
         const shouldFetch = (status === 'poi' && currentStop) || status === 'initial' || status === 'complete';
 
         if (shouldFetch && tourId) {
-            fetchNarration();
+            // Dedup check using ref
+            if (!isFetchingRef.current) {
+                fetchNarration();
+            }
         } else {
             setNarration('');
         }
@@ -38,6 +42,7 @@ export default function NarrationCard() {
         if (!tourId) return;
 
         setIsLoading(true);
+        isFetchingRef.current = true;
         setError(null);
         setNarrating(true);
 
@@ -59,6 +64,7 @@ export default function NarrationCard() {
         } finally {
             setIsLoading(false);
             setNarrating(false);
+            isFetchingRef.current = false;
         }
     };
 

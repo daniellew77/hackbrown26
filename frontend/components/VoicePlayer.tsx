@@ -79,6 +79,10 @@ export default function VoicePlayer({ text, autoplay = true, onEnded }: VoicePla
             console.log("🎙️ VoicePlayer effect cleanup. Aborting...", { textLen: text?.length });
             if (abortControllerRef.current) {
                 abortControllerRef.current.abort();
+                isFetchingRef.current = false; // Allow immediate retry (Strict Mode compat)
+                if (lastFetchedText.current === text) {
+                    lastFetchedText.current = null;
+                }
             }
         };
     }, [text, tourId, autoplay]);
