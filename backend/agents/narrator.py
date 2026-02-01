@@ -85,6 +85,8 @@ class NarratorAgent(BaseAgent):
         
         If there are specific facts known about this place, weave them in naturally.
         End with a thought-provoking question or a transition to the next step (which involves walking).
+
+        For the time being, keep your response to be just one short brief sentence. This is for testing. 
         """
         
         return await self.ai.generate_content(prompt)
@@ -98,5 +100,21 @@ class NarratorAgent(BaseAgent):
         Context: {context}
         
         Say something brief (1 sentence) to keep the energy up or share a quick tidbit.
+        """
+        return await self.ai.generate_content(prompt)
+
+    async def generate_outro(self, preferences: UserPreferences) -> str:
+        """Generate a farewell message when the tour is complete."""
+        persona = self._get_persona_prompt(preferences.guide_personality.value)
+        prompt = f"""
+        {persona}
+        The user has completed their {preferences.theme} tour of Providence.
+        
+        Generate a warm, memorable farewell message (2-3 sentences).
+        - Thank them for exploring with you.
+        - Encourage them to grab a bite to eat or explore more on their own.
+        - Sign off in character (e.g. "Catch you on the flip side!" for Henry).
+        
+        Reflect the personality strongly here.
         """
         return await self.ai.generate_content(prompt)

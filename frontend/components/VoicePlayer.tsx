@@ -17,6 +17,8 @@ export default function VoicePlayer({ text, autoplay = true, onEnded }: VoicePla
     const lastFetchedText = useRef<string | null>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
 
+    const isFetchingRef = useRef(false);
+
     const [isPlaying, setIsPlaying] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -54,8 +56,9 @@ export default function VoicePlayer({ text, autoplay = true, onEnded }: VoicePla
         }
 
         if (text && autoplay && tourId) {
-            // Dedup: Don't fetch if successfully fetched this text already
-            if (lastFetchedText.current === text) return;
+            // Dedup: Don't fetch if successfully fetched this text already OR if currently loading
+            // We use a separate ref for 'attempted' text to catch race conditions and isFetchingRef for sync blocking
+            if (lastFetchedText.current === text || isFetchingRef.current) return;
 
             // Check if TTS is enabled in preferences
             const isTtsEnabled = useTourStore.getState().preferences.ttsEnabled;
@@ -63,6 +66,8 @@ export default function VoicePlayer({ text, autoplay = true, onEnded }: VoicePla
 
             if (!isTtsEnabled) {
                 console.log("TTS is disabled, skipping auto-play");
+                // Mark as 'handled' so we don't spam logs
+                lastFetchedText.current = text;
                 return;
             }
 
@@ -71,6 +76,7 @@ export default function VoicePlayer({ text, autoplay = true, onEnded }: VoicePla
         }
 
         return () => {
+            console.log("🎙️ VoicePlayer effect cleanup. Aborting...", { textLen: text?.length });
             if (abortControllerRef.current) {
                 abortControllerRef.current.abort();
             }
@@ -91,6 +97,7 @@ export default function VoicePlayer({ text, autoplay = true, onEnded }: VoicePla
         abortControllerRef.current = controller;
 
         setIsLoading(true);
+        isFetchingRef.current = true;
         setError(null);
 
         try {
@@ -107,25 +114,37 @@ export default function VoicePlayer({ text, autoplay = true, onEnded }: VoicePla
 
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
+            console.log("🎙️ Audio fetched successfully, url created:", url);
             setAudioUrl(url);
 
             // Play ...
             setTimeout(() => {
                 if (audioRef.current && !controller.signal.aborted) {
+                    console.log("🎙️ Attempting to auto-play...");
                     audioRef.current.play()
-                        .then(() => setIsPlaying(true))
-                        .catch(e => console.error("Auto-play failed:", e));
+                        .then(() => {
+                            console.log("🎙️ Auto-play started!");
+                            setIsPlaying(true);
+                        })
+                        .catch(e => console.error("🎙️ Auto-play failed:", e));
+                } else {
+                    console.log("🎙️ Auto-play skipped: ref missing or aborted", { ref: !!audioRef.current, aborted: controller.signal.aborted });
                 }
             }, 100);
 
         } catch (err: any) {
-            if (err.name === 'AbortError') return;
+            if (err.name === 'AbortError') {
+                console.log("🎙️ Fetch aborted (AbortError)");
+                return;
+            }
             console.error('Audio error:', err);
             setError('Could not load audio');
             lastFetchedText.current = null; // Retry allowed on error
         } finally {
             if (abortControllerRef.current === controller) {
+                console.log("🎙️ fetchAndPlay finished (loading=false)");
                 setIsLoading(false);
+                isFetchingRef.current = false;
             }
         }
     };

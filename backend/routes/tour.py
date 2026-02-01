@@ -280,6 +280,26 @@ async def generate_narration(tour_id: str):
             "poi": None
         }
 
+    # CASE 3: Tour Complete (Outro)
+    if tour.status == TourStatus.COMPLETE:
+        # Check cache
+        if tour.narration_progress.script_text and "farewell" in tour.narration_progress.current_stop_id:
+             return {"narration": tour.narration_progress.script_text, "cached": True}
+
+        outro = await narrator_agent.generate_outro(tour.preferences)
+        
+        # Update state
+        tour.conversation_history.append({"role": "assistant", "content": outro})
+        tour.narration_progress.script_text = outro
+        tour.narration_progress.current_stop_id = "farewell"
+        
+        return {
+            "narration": outro,
+            "cached": False,
+            "intro": "",
+            "poi": "Tour Complete"
+        }
+
     # CASE 2: POI Narration (When arrived)
     if not tour.route.current_stop:
         raise HTTPException(status_code=400, detail="No current stop")

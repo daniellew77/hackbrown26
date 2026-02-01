@@ -14,13 +14,18 @@ export default function NarrationCard() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    useEffect(() => {
+        console.log("📘 NarrationCard MOUNTED/UPDATED. Status:", status, "Stop:", currentStop?.id);
+        return () => console.log("📘 NarrationCard UNMOUNTING");
+    }, []);
+
     const character = CHARACTERS.find(c => c.id === preferences.guidePersonality) || CHARACTERS[0];
     const guideName = character.name;
     const guideAvatar = character.avatar;
 
     useEffect(() => {
-        // Fetch narration if at a POI or at the very beginning (Initial)
-        const shouldFetch = (status === 'poi' && currentStop) || status === 'initial';
+        // Fetch narration if at a POI, initial, or complete
+        const shouldFetch = (status === 'poi' && currentStop) || status === 'initial' || status === 'complete';
 
         if (shouldFetch && tourId) {
             fetchNarration();
@@ -57,8 +62,8 @@ export default function NarrationCard() {
         }
     };
 
-    // Show card during INITIAL (intro) and POI states
-    if (status !== 'poi' && status !== 'initial') return null;
+    // Show card during INITIAL, POI, and COMPLETE states
+    if (status !== 'poi' && status !== 'initial' && status !== 'complete') return null;
 
     return (
         <div className={styles.card}>
