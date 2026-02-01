@@ -22,7 +22,7 @@ class NarratorAgent(BaseAgent):
         
         prompt = f"""
         You are a tour guide with a {preferences.guide_personality.value} personality.
-        The user has chosen a {preferences.theme.value} themed tour of Providence, RI.
+        The user has chosen a {preferences.theme} themed tour of Providence, RI.
         
         Generate a brief, engaging welcome message (2-3 sentences max).
         Introduce yourself and getting them excited about the tour.
@@ -43,7 +43,7 @@ class NarratorAgent(BaseAgent):
         prompt = f"""
         You are a tour guide with a {preferences.guide_personality.value} personality.
         The user has arrived at: {poi.name} ({poi.address}).
-        This stop is part of a {preferences.theme.value} themed tour.
+        This stop is part of a {preferences.theme} themed tour.
         
         Facts about this location:
         {chr(10).join(f"- {t}" for t in poi.themes)}
@@ -53,7 +53,7 @@ class NarratorAgent(BaseAgent):
         
         Your task:
         Write a short, engaging narration script (3-4 paragraphs max) for this stop.
-        Focus heavily on the '{preferences.theme.value}' aspect if possible.
+        Focus heavily on the '{preferences.theme}' aspect if possible.
         Be {preferences.guide_personality.value} in your tone.
         
         INSTRUCTION: Include ONE sound effect instruction at the start or during the most dramatic moment.

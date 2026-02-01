@@ -6,7 +6,7 @@
 import { create } from 'zustand';
 
 // Types
-export type TourTheme = 'historical' | 'art' | 'ghost';
+export type TourTheme = string;
 export type GuidePersonality = 'funny' | 'serious' | 'dramatic' | 'friendly';
 export type TourStatus = 'initial' | 'traveling' | 'poi' | 'complete';
 
@@ -16,6 +16,7 @@ export interface UserPreferences {
     soundEffects: boolean;
     guidePersonality: GuidePersonality;
     interactive: boolean;
+    ttsEnabled: boolean;
 }
 
 export interface POIStop {
@@ -31,6 +32,7 @@ export interface POIStop {
 export interface TourRoute {
     stops: POIStop[];
     currentStopIndex: number;
+    currentPath?: [number, number][]; // Array of [lat, lng] coordinates
 }
 
 export interface TourState {
@@ -67,7 +69,9 @@ interface TourActions {
     // Tour lifecycle
     setTourId: (id: string) => void;
     setRoute: (stops: POIStop[]) => void;
+    updateRoute: (stops: POIStop[], currentIndex?: number) => void;
     setStatus: (status: TourStatus) => void;
+    setCurrentPath: (path: [number, number][]) => void;
 
     // Location
     updateLocation: (lat: number, lng: number) => void;
@@ -99,6 +103,7 @@ const initialPreferences: UserPreferences = {
     soundEffects: true,
     guidePersonality: 'friendly',
     interactive: true,
+    ttsEnabled: false,
 };
 
 const initialState: TourState = {
@@ -138,7 +143,16 @@ export const useTourStore = create<TourState & TourActions>((set, get) => ({
         route: { ...state.route, stops, currentStopIndex: 0 },
     })),
 
+    updateRoute: (stops, currentIndex) => set((state) => ({
+        route: { ...state.route, stops, currentStopIndex: currentIndex ?? state.route.currentStopIndex },
+    })),
+
     setStatus: (status) => set({ status }),
+
+    // Route Path (Google Maps Polyline)
+    setCurrentPath: (path: [number, number][]) => set((state) => ({
+        route: { ...state.route, currentPath: path }
+    })),
 
     // Location
     updateLocation: (lat, lng) => set({

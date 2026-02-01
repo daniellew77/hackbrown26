@@ -67,7 +67,8 @@ def generate_route(
     theme: str,
     time_budget_minutes: int = 60,
     max_stops: int = 8,
-    end_coords: Optional[tuple[float, float]] = None
+    end_coords: Optional[tuple[float, float]] = None,
+    use_dynamic_search: bool = False
 ) -> Route:
     """
     Generate an optimized tour route using greedy nearest-neighbor algorithm.
@@ -78,24 +79,61 @@ def generate_route(
         time_budget_minutes: Total time available for tour
         max_stops: Maximum number of stops
         end_coords: Optional destination
+        use_dynamic_search: Whether to use Google Places API for finding POIs
     
     Returns:
         Route object with ordered stops
     """
-    # Load and filter POIs
-    all_pois = load_pois()
-    themed_pois = filter_pois_by_theme(all_pois, theme)
     
-    if not themed_pois:
-        # Fallback to all POIs if none match theme
-        themed_pois = all_pois
+    candidates = []
+
+    # 1. Dynamic Search (Google Places)
+    if use_dynamic_search:
+        print(f"🌍 Performing dynamic tour generation for theme: '{theme}'")
+        from services.knowledge import KnowledgeService
+        ks = KnowledgeService()
+        
+        # Search radius: 2km
+        places = ks.search_places(query=theme, location=start_coords, radius_meters=2000, open_now=True)
+        
+        # Convert to candidate format matching generic POI dict
+        for p in places:
+            # Filter low rated places if possible, but keep enough candidates
+            if p.get("rating") and float(p["rating"]) < 3.5:
+                continue
+                
+            candidates.append({
+                "id": p["place_id"],
+                "name": p["name"],
+                "coordinates": p["coordinates"],
+                "address": p["address"],
+                "poi_type": p["types"][0] if p["types"] else "point_of_interest",
+                "themes": [theme],
+                "estimated_duration": 15, # Default 15 mins for dynamic stops
+                "facts": [], # No pre-written facts
+                "interactive_questions": []
+            })
+            
+    # 2. Fallback / Static Data
+    if not candidates:
+        if use_dynamic_search:
+            print("⚠️ Dynamic search yielded no results. Falling back to curated list.")
+            
+        # Load and filter POIs
+        all_pois = load_pois()
+        themed_pois = filter_pois_by_theme(all_pois, theme)
+        
+        if not themed_pois:
+            # Fallback to all POIs if none match theme
+            themed_pois = all_pois
+        
+        # Score and sort POIs
+        scored_pois = [(poi, score_poi(poi, theme)) for poi in themed_pois]
+        scored_pois.sort(key=lambda x: x[1], reverse=True)
+        
+        # Take top candidates
+        candidates = [poi for poi, _ in scored_pois[:max_stops * 3]]
     
-    # Score and sort POIs
-    scored_pois = [(poi, score_poi(poi, theme)) for poi in themed_pois]
-    scored_pois.sort(key=lambda x: x[1], reverse=True)
-    
-    # Take top candidates (more than we need, to allow for distance optimization)
-    candidates = [poi for poi, _ in scored_pois[:max_stops * 2]]
     
     # Greedy nearest-neighbor route construction
     route_stops = []
@@ -103,6 +141,7 @@ def generate_route(
     remaining_time = time_budget_minutes
     used_ids = set()
     
+    # Limit iterations to avoid infinite loops if something goes wrong
     while candidates and len(route_stops) < max_stops and remaining_time > 10:
         # Find nearest unvisited POI
         best_poi = None
@@ -158,9 +197,20 @@ def get_walking_directions(
 ) -> dict:
     """
     Get walking directions between two points.
-    In production, this would call Google Routes API.
-    For now, returns a simple placeholder.
+    Tries Google Directions API first, falls back to estimation.
     """
+    # 1. Try Real API
+    try:
+        from services.knowledge import KnowledgeService
+        ks = KnowledgeService()
+        directions = ks.get_directions(origin, destination)
+        
+        if directions:
+            return directions
+    except Exception as e:
+        print(f"Using fallback directions due to error: {e}")
+
+    # 2. Fallback: Haversine Estimation
     distance = haversine_distance(origin, destination)
     duration = estimate_walking_time(distance)
     
@@ -174,10 +224,10 @@ def get_walking_directions(
     bearing = math.degrees(math.atan2(x, y))
     
     # Convert bearing to cardinal direction
-    directions = ["north", "northeast", "east", "southeast", 
+    directions_list = ["north", "northeast", "east", "southeast", 
                   "south", "southwest", "west", "northwest"]
     index = round(bearing / 45) % 8
-    cardinal = directions[index]
+    cardinal = directions_list[index]
     
     return {
         "distance_meters": round(distance),
@@ -190,7 +240,8 @@ def get_walking_directions(
                 "distance": round(distance),
                 "duration": round(duration * 60)  # seconds
             }
-        ]
+        ],
+        "overview_polyline": None # No polyline for estimation
     }
 
 

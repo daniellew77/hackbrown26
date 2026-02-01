@@ -111,11 +111,21 @@ async def create_tour(request: CreateTourRequest):
     start_coords = tuple(request.start_location) if request.start_location else (41.8240, -71.4128)
     tour.current_location = start_coords
     
+
+    # Determine if we should use dynamic search
+    # Use dynamic if theme is NOT one of the standard ones, OR if explicitly requested (though currently no explicit flag in request)
+    standard_themes = ["historical", "art", "ghost"]
+    use_dynamic = request.theme not in standard_themes
+    
+    if use_dynamic:
+        print(f"✨ Custom theme detected: '{request.theme}'. Using dynamic generation.")
+
     # Generate optimized route
     route = generate_route(
         start_coords=start_coords,
         theme=request.theme,
-        time_budget_minutes=request.tour_length
+        time_budget_minutes=request.tour_length,
+        use_dynamic_search=use_dynamic
     )
     tour.route = route
     
@@ -308,11 +318,16 @@ async def chat(tour_id: str, request: ChatRequest):
         
         # If we found new places, format them nicely
         if replan_result.get("new_stops"):
-            stops_text = "\n".join([
-                f"• {p['name']} ({p.get('rating', 'N/A')}⭐) - {p.get('address', '')[:50]}"
-                for p in replan_result["new_stops"]
-            ])
-            answer += f"\n\nHere are some options:\n{stops_text}\n\nWould you like to visit one of these?"
+            # Check if we already auto-updated the route
+            if replan_result.get("route_updated"):
+                 # Agent already set the message
+                 pass
+            else:
+                stops_text = "\n".join([
+                    f"• {p['name']} ({p.get('rating', 'N/A')}⭐) - {p.get('address', '')[:50]}"
+                    for p in replan_result["new_stops"]
+                ])
+                answer += f"\n\nHere are some options:\n{stops_text}\n\nWould you like to visit one of these?"
         
         # Handle skip action
         if replan_result.get("skipped"):

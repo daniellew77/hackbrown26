@@ -9,6 +9,7 @@ import TourStatus from '@/components/TourStatus';
 import LocationSimulator from '@/components/LocationSimulator';
 import NarrationCard from '@/components/NarrationCard';
 import ChatInterface from '@/components/ChatInterface';
+import { decodePolyline } from '@/utils/polyline';
 import styles from './page.module.css';
 
 // Dynamic import for Map to avoid SSR issues with Mapbox
@@ -24,13 +25,51 @@ const Map = dynamic(() => import('@/components/Map'), {
 
 export default function TourPage() {
     const router = useRouter();
-    const { tourId, status, preferences, route, setRoute, isLoading, error, setLoading, setError } = useTourStore();
+    const { tourId, status, preferences, route, setRoute, isLoading, error, setLoading, setError, currentLocation } = useTourStore();
     const currentStop = useTourStore(selectCurrentStop);
     const progressCurrent = useTourStore(selectProgressCurrent);
     const progressTotal = useTourStore(selectProgressTotal);
 
     // Enable geolocation tracking
     useGeolocation();
+
+    // Fetch directions when target stop changes
+    useEffect(() => {
+        if (!tourId || !currentStop) return;
+
+        const fetchWalkingDirections = async () => {
+            // Use current location or fallback to previous stop (or prov center)
+            const startLoc = useTourStore.getState().currentLocation || [41.8240, -71.4128];
+
+            try {
+                const response = await fetch(`http://localhost:8000/api/tour/${tourId}/location`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lat: startLoc[0],
+                        lng: startLoc[1]
+                    }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.directions?.overview_polyline) {
+                        const path = decodePolyline(data.directions.overview_polyline);
+                        useTourStore.getState().setCurrentPath(path);
+                    } else if (data.directions?.steps) {
+                        // Only steps? might be fallback. 
+                        // Fallback logic in routing.py returns steps but no overview_polyline -> Map handles this by drawing straight line.
+                        // So just clear path.
+                        useTourStore.getState().setCurrentPath([]);
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to update directions:", e);
+            }
+        };
+
+        fetchWalkingDirections();
+    }, [tourId, currentStop?.id]); // Only re-run when the target stop changes
 
     // Fetch route on mount if not already loaded
     useEffect(() => {

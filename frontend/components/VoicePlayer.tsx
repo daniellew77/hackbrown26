@@ -56,6 +56,12 @@ export default function VoicePlayer({ text, autoplay = true, onEnded }: VoicePla
             // Dedup: Don't fetch if successfully fetched this text already
             if (lastFetchedText.current === text) return;
 
+            // Check if TTS is enabled in preferences
+            if (!useTourStore.getState().preferences.ttsEnabled) {
+                console.log("TTS is disabled, skipping auto-play");
+                return;
+            }
+
             fetchAndPlay();
         }
 

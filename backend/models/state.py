@@ -10,7 +10,8 @@ from datetime import datetime
 import uuid
 
 
-class TourTheme(str, Enum):
+
+class TourTheme:
     HISTORICAL = "historical"
     ART = "art"
     GHOST = "ghost"
@@ -34,7 +35,7 @@ class TourStatus(str, Enum):
 class UserPreferences:
     """User's tour preferences."""
     tour_length: int = 60  # minutes
-    theme: TourTheme = TourTheme.HISTORICAL
+    theme: str = TourTheme.HISTORICAL
     sound_effects: bool = True
     guide_personality: GuidePersonality = GuidePersonality.FRIENDLY
     interactive: bool = True
@@ -124,7 +125,7 @@ class TourState:
             "created_at": self.created_at.isoformat(),
             "preferences": {
                 "tour_length": self.preferences.tour_length,
-                "theme": self.preferences.theme.value,
+                "theme": self.preferences.theme,
                 "sound_effects": self.preferences.sound_effects,
                 "guide_personality": self.preferences.guide_personality.value,
                 "interactive": self.preferences.interactive
@@ -174,7 +175,7 @@ class TourManager:
         """Create a new tour with given preferences."""
         user_prefs = UserPreferences(
             tour_length=preferences.get("tour_length", 60),
-            theme=TourTheme(preferences.get("theme", "historical")),
+            theme=preferences.get("theme", "historical"),  # Allow string
             sound_effects=preferences.get("sound_effects", True),
             guide_personality=GuidePersonality(preferences.get("guide_personality", "friendly")),
             interactive=preferences.get("interactive", True)

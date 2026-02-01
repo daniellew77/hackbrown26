@@ -12,7 +12,7 @@ interface Message {
 }
 
 export default function ChatInterface() {
-    const { tourId, status, stopAudio } = useTourStore();
+    const { tourId, status, stopAudio, updateRoute } = useTourStore();
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -55,6 +55,22 @@ export default function ChatInterface() {
 
             const data = await response.json();
             setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
+
+            // Check for route update from backend replanning
+            if (data.replan_result?.route_updated) {
+                try {
+                    const tourRes = await fetch(`http://localhost:8000/api/tour/${tourId}`);
+                    if (tourRes.ok) {
+                        const { tour } = await tourRes.json();
+                        if (tour.route?.stops) {
+                            console.log("🔄 Route updated via chat. Syncing frontend state...");
+                            updateRoute(tour.route.stops, tour.route.current_stop_index);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Failed to sync updated route:", e);
+                }
+            }
         } catch (err) {
             console.error('Chat error:', err);
             setMessages(prev => [...prev, {

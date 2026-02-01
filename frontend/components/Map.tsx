@@ -213,7 +213,16 @@ export default function Map({ className }: MapProps) {
 
         // Update route line
         if (route.stops.length > 1) {
-            const coordinates = route.stops.map(stop => [stop.coordinates[1], stop.coordinates[0]]);
+            let coordinates: number[][] = [];
+
+            // Use detailed Google Maps path if available
+            if (route.currentPath && route.currentPath.length > 0) {
+                // Mapbox expects [lng, lat], but store has [lat, lng]
+                coordinates = route.currentPath.map(p => [p[1], p[0]]);
+            } else {
+                // Fallback: Straight lines between stops
+                coordinates = route.stops.map(stop => [stop.coordinates[1], stop.coordinates[0]]);
+            }
 
             if (map.current.getSource('route')) {
                 (map.current.getSource('route') as mapboxgl.GeoJSONSource).setData({
@@ -247,9 +256,8 @@ export default function Map({ className }: MapProps) {
                     },
                     paint: {
                         'line-color': themeColor,
-                        'line-width': 4,
-                        'line-opacity': 0.7,
-                        'line-dasharray': [2, 2],
+                        'line-width': 5,
+                        'line-opacity': 0.8,
                     },
                 }, 'poi-circles'); // Place below POI markers
             }
@@ -263,7 +271,7 @@ export default function Map({ className }: MapProps) {
             });
             map.current.fitBounds(bounds, { padding: 80, duration: 1000 });
         }
-    }, [route.stops, route.currentStopIndex, preferences.theme, mapLoaded]);
+    }, [route.stops, route.currentStopIndex, route.currentPath, preferences.theme, mapLoaded]);
 
     // Update user location using native circle layer
     useEffect(() => {

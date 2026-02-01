@@ -17,43 +17,7 @@
   z-index: -1;
 }
 
-.bgOrb1 {
-  position: fixed;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
-  top: -200px;
-  left: -200px;
-  pointer-events: none;
-  z-index: -1;
-  animation: float 20s ease-in-out infinite;
-}
 
-.bgOrb2 {
-  position: fixed;
-  width: 800px;
-  height: 800px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.06) 0%, transparent 70%);
-  bottom: -300px;
-  right: -300px;
-  pointer-events: none;
-  z-index: -1;
-  animation: float 25s ease-in-out infinite reverse;
-}
-
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-
-  50% {
-    transform: translate(30px, -30px);
-  }
-}
 
 /* Main content */
 .main {
@@ -89,6 +53,25 @@
 .title {
   font-size: clamp(2.5rem, 8vw, 4rem);
   margin-bottom: 1rem;
+  /* Grid layout to center the boundary between Explore and City */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* Two equal columns */
+  width: 100%;
+  gap: 0.2em;
+  /* Small gap between words */
+  align-items: baseline;
+  /* Align text baselines */
+}
+
+/* Ensure right alignment for the left part (Explore) */
+.titleSpanLeft {
+  text-align: right;
+}
+
+/* Ensure left alignment for the right part (City) */
+.titleSpanRight {
+  text-align: left;
 }
 
 .highlight {
@@ -342,4 +325,77 @@
   text-align: center;
   color: var(--foreground-muted);
   font-size: 0.875rem;
+}
+
+.customThemeInput {
+  width: 100%;
+  padding: 1rem;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--foreground);
+  font-size: 1rem;
+  margin-top: 1rem;
+  transition: all var(--transition-normal);
+}
+
+.customThemeInput:focus {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-glow);
+  outline: none;
+}
+
+/* NEW STYLES FOR REFACTOR */
+
+.heroContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.heroBtn {
+  font-size: 1.25rem;
+  padding: 1.2rem 3.5rem;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.heroBtn:hover {
+  box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.preferencesContainer {
+  width: 100%;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  color: var(--foreground-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.backBtn:hover {
+  color: var(--primary);
+}
+
+.pageTitle {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  background: linear-gradient(to right, #fff, #bbb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }

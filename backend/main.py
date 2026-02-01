@@ -6,7 +6,12 @@ FastAPI application with WebSocket support for real-time tour updates.
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 import uvicorn
+import os
+
+# Load environment variables
+load_dotenv()
 
 from routes.tour import router as tour_router
 from models.state import TourManager
