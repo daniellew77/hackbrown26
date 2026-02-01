@@ -235,8 +235,6 @@ export default function TourPage() {
                 <Map />
             </div>
 
-            {/* Continuous Voice Listener - always on */}
-            <ContinuousVoiceListener />
             {/* Top Left Panel - Stop Info & Actions (hidden during intro) */}
             {!showIntro && (
                 <div className={styles.topLeftPanel}>
