@@ -91,15 +91,9 @@ class VoiceService:
         if not self.api_key:
             return None
 
-        # Strip SFX tags for TTS
-        import re
-        clean_text = re.sub(r'\[SFX:.*?\]', '', text).strip()
-        
-        # Check for SFX... (same as before)
-        sfx_match = re.search(r'\[SFX:(.*?)\]', text)
-        if sfx_match:
-            sfx_prompt = sfx_match.group(1).strip()
-            print(f"🎵 Found SFX request: {sfx_prompt}")
+        # Audio tags like [sighs], [laughs] are passed through to v3 model
+        # They will be rendered as vocal expressions
+        clean_text = text.strip()
 
         # Determine voice ID
         if not voice_id:
@@ -124,11 +118,11 @@ class VoiceService:
         
         data = {
             "text": clean_text,
-            "model_id": "eleven_flash_v2_5", # Switch to Flash for speed/cost
+            "model_id": "eleven_v3", # v3 model supports audio tags like [sighs], [laughs]
             "voice_settings": {
-                "stability": 0.5,
+                "stability": 0.5,  # 'Natural' setting (Must be 0.0, 0.5, or 1.0 for v3 alpha)
                 "similarity_boost": 0.75,
-                "use_speaker_boost": True
+                # "use_speaker_boost": True # Often causes issues with alpha models
             }
         }
 
@@ -138,11 +132,14 @@ class VoiceService:
                 print(f"✅ Generated audio (Flash) for text: '{clean_text[:20]}...'")
                 return response.content
             else:
-                print(f"\n❌ ElevenLabs Error: {response.status_code}")
-                # Fallback to Multilingual v2 if Flash unavailable
-                if response.status_code == 400 and "model_id" in response.text:
-                   print("⚠️ Flash model unavailable, retrying with Multilingual v2...")
-                   data["model_id"] = "eleven_multilingual_v2"
+                print(f"\n❌ ElevenLabs Error: {response.status_code} - {response.text}")
+                # Fallback to Turbo v2.5 if v3 fails
+                if response.status_code == 400:
+                   print("⚠️ v3 model failed, retrying with Turbo v2.5...")
+                   data["model_id"] = "eleven_turbo_v2_5"
+                   # Remove tags from text for non-v3 models as they might read them out
+                   import re
+                   data["text"] = re.sub(r'\[.*?\]', '', clean_text) 
                    retry = requests.post(url, json=data, headers=headers)
                    if retry.status_code == 200:
                        return retry.content

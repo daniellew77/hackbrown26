@@ -59,8 +59,8 @@ class QAAgent(BaseAgent):
         
         User: "{question}"
         
-        Answer the user's question naturally. Use the provided knowledge if relevant.
-        Keep it brief (1-3 sentences).
+        Answer naturally and concisely (1-3 sentences). Be genuine - if you don't know something, say so.
+        Don't be overly enthusiastic or performative. Just be helpful.
         """
         
         return await self.ai.generate_content(prompt)

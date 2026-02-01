@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTourStore } from '@/store/tour';
 import styles from './ChatInterface.module.css';
 import VoiceInput from './VoiceInput';
@@ -12,7 +12,7 @@ interface Message {
 }
 
 export default function ChatInterface() {
-    const { tourId, status, stopAudio, updateRoute } = useTourStore();
+    const { tourId, status, stopAudio, updateRoute, pendingVoiceMessage, setPendingVoiceMessage } = useTourStore();
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -81,6 +81,15 @@ export default function ChatInterface() {
             setIsLoading(false);
         }
     };
+
+    // Process pending voice messages from continuous listener
+    useEffect(() => {
+        if (pendingVoiceMessage && !isLoading && tourId) {
+            console.log('🎤 Processing pending voice message:', pendingVoiceMessage);
+            sendMessage(undefined, pendingVoiceMessage);
+            setPendingVoiceMessage(null);
+        }
+    }, [pendingVoiceMessage, isLoading, tourId]);
 
     return (
         <div className={styles.chatContainer}>

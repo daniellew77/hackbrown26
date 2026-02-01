@@ -188,11 +188,12 @@
     font-size: 1rem;
     font-weight: 600;
     margin-bottom: 0.25rem;
+    color: #000000;
 }
 
 .popup p {
     font-size: 0.8rem;
-    color: var(--foreground-muted);
+    color: #000000;
     margin: 0;
 }
 

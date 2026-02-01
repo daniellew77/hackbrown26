@@ -195,7 +195,7 @@ export default function Map({ className }: MapProps) {
 
                 new mapboxgl.Popup({ offset: 25 })
                     .setLngLat(coords as [number, number])
-                    .setHTML(`<h3 style="margin:0 0 4px;font-size:14px;">${props?.name}</h3><p style="margin:0;font-size:12px;opacity:0.7;">${props?.address}</p>`)
+                    .setHTML(`<h3 style="margin:0 0 4px;font-size:14px;color:black;">${props?.name}</h3><p style="margin:0;font-size:12px;opacity:0.7;color:black;">${props?.address}</p>`)
                     .addTo(map.current!);
             });
 

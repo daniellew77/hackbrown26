@@ -58,11 +58,15 @@ export default function VoicePlayer({ text, autoplay = true, onEnded }: VoicePla
             if (lastFetchedText.current === text) return;
 
             // Check if TTS is enabled in preferences
-            if (!useTourStore.getState().preferences.ttsEnabled) {
+            const isTtsEnabled = useTourStore.getState().preferences.ttsEnabled;
+            console.log("🎙️ VoicePlayer check - TTS enabled:", isTtsEnabled, "tourId:", tourId, "text length:", text?.length);
+
+            if (!isTtsEnabled) {
                 console.log("TTS is disabled, skipping auto-play");
                 return;
             }
 
+            console.log("🎙️ Calling fetchAndPlay...");
             fetchAndPlay();
         }
 
@@ -71,7 +75,7 @@ export default function VoicePlayer({ text, autoplay = true, onEnded }: VoicePla
                 abortControllerRef.current.abort();
             }
         };
-    }, [text, tourId]);
+    }, [text, tourId, autoplay]);
 
     // ...
 

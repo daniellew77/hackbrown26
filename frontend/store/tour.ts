@@ -17,6 +17,7 @@ export interface UserPreferences {
     guidePersonality: GuidePersonality;
     interactive: boolean;
     ttsEnabled: boolean;
+    continuousListening: boolean;
 }
 
 export interface POIStop {
@@ -60,6 +61,9 @@ export interface TourState {
     // Demo mode
     isDemoMode: boolean;
     audioStopTrigger: number;
+
+    // Pending voice input (from continuous listener)
+    pendingVoiceMessage: string | null;
 }
 
 interface TourActions {
@@ -86,6 +90,9 @@ interface TourActions {
     // Audio Control
     stopAudio: () => void;
 
+    // Voice input
+    setPendingVoiceMessage: (message: string | null) => void;
+
     // UI state
     setLoading: (isLoading: boolean) => void;
     setError: (error: string | null) => void;
@@ -103,7 +110,8 @@ const initialPreferences: UserPreferences = {
     soundEffects: true,
     guidePersonality: 'henry',
     interactive: true,
-    ttsEnabled: false,
+    ttsEnabled: true,
+    continuousListening: true,
 };
 
 const initialState: TourState = {
@@ -121,6 +129,7 @@ const initialState: TourState = {
     currentNarration: '',
     isDemoMode: false,
     audioStopTrigger: 0,
+    pendingVoiceMessage: null,
 };
 
 export const useTourStore = create<TourState & TourActions>((set, get) => ({
@@ -130,6 +139,9 @@ export const useTourStore = create<TourState & TourActions>((set, get) => ({
 
     // Audio Control
     stopAudio: () => set((state) => ({ audioStopTrigger: state.audioStopTrigger + 1 })),
+
+    // Voice Input
+    setPendingVoiceMessage: (message) => set({ pendingVoiceMessage: message }),
 
     // Preference actions
     setPreferences: (newPreferences) => set((state) => ({

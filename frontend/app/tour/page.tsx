@@ -8,6 +8,7 @@ import { useGeolocation } from '@/hooks/useGeolocation';
 import LocationSimulator from '@/components/LocationSimulator';
 import NarrationCard from '@/components/NarrationCard';
 import ChatInterface from '@/components/ChatInterface';
+import ContinuousVoiceListener from '@/components/ContinuousVoiceListener';
 import { decodePolyline } from '@/utils/polyline';
 import styles from './page.module.css';
 
@@ -234,8 +235,8 @@ export default function TourPage() {
                 <Map />
             </div>
 
-
-
+            {/* Continuous Voice Listener - always on */}
+            <ContinuousVoiceListener />
             {/* Top Left Panel - Stop Info & Actions (hidden during intro) */}
             {!showIntro && (
                 <div className={styles.topLeftPanel}>
