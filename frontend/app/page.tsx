@@ -182,7 +182,7 @@ export default function Home() {
         return (
           <div className={styles.stepContent}>
             <div className={styles.wizardHeader}>
-              <h2 className={styles.wizardTitle}>Pick Your Guide</h2>
+              <h2 className={styles.wizardTitle}>Pick Your Blob</h2>
             </div>
 
             <div className={styles.circleContainer}>
