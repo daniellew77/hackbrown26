@@ -359,7 +359,7 @@ async def chat(tour_id: str, request: ChatRequest):
         }
     else:
         # Normal Q&A
-        answer = await qa_agent.answer_question(
+        answer, _ = await qa_agent.answer_question(
             question=request.message,
             current_stop=tour.route.current_stop,
             preferences=tour.preferences,

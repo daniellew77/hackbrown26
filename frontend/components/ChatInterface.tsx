@@ -106,7 +106,9 @@ export default function ChatInterface() {
                         className={`${styles.message} ${msg.role === 'user' ? styles.user : styles.assistant}`}
                     >
                         <div className={styles.bubble}>
-                            {msg.content.replace(/\[.*?\]/g, '').trim()}
+                            {typeof msg.content === 'string'
+                                ? msg.content.replace(/\[.*?\]/g, '').trim()
+                                : String(msg.content || '')}
                         </div>
                     </div>
                 ))}
