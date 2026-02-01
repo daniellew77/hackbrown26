@@ -67,7 +67,7 @@ class NarratorAgent(BaseAgent):
         
         Your task:
         Write a short, engaging narration script (3-4 paragraphs max) for this stop.
-        Focus heavily on the '{preferences.theme}' aspect if possible.
+        Focus heavily on the '{preferences.theme}' aspect if possible. THIS MUST BE APPROPRIATE FOR PEOPLE OF ALL AGES.
         
         VOICE DELIVERY (ElevenLabs v3 Audio Tags):
         Use these tags sparingly to add natural expression - don't overuse them:
