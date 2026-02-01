@@ -113,6 +113,9 @@ class TourState:
     
     # POI knowledge cache
     poi_knowledge_cache: dict = field(default_factory=dict)
+    
+    # Audio cache to save credits (text_hash -> bytes)
+    audio_cache: dict[str, bytes] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         """Serialize state to dictionary."""

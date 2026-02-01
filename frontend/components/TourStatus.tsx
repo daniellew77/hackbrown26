@@ -33,7 +33,7 @@ interface TourStatusProps {
 }
 
 export default function TourStatus({ className, onStartTour, onSkipStop }: TourStatusProps) {
-    const { status, preferences, setStatus, advanceStop, isDemoMode, toggleDemoMode } = useTourStore();
+    const { tourId, status, preferences, setStatus, advanceStop, isDemoMode, toggleDemoMode } = useTourStore();
     const currentStop = useTourStore(selectCurrentStop);
     const nextStop = useTourStore(selectNextStop);
     const progressCurrent = useTourStore(selectProgressCurrent);
@@ -43,23 +43,52 @@ export default function TourStatus({ className, onStartTour, onSkipStop }: TourS
     const config = STATUS_CONFIG[status];
     const themeColor = `var(--theme-${preferences.theme})`;
 
+    const syncAdvance = async () => {
+        if (!tourId) return;
+        try {
+            await fetch(`http://localhost:8000/api/tour/${tourId}/advance`, {
+                method: 'POST',
+            });
+        } catch (e) {
+            console.error('Failed to sync tour progress:', e);
+        }
+    };
+
+    const syncTransition = async (newStatus: string) => {
+        if (!tourId) return;
+        try {
+            await fetch(`http://localhost:8000/api/tour/${tourId}/transition`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ new_status: newStatus }),
+            });
+        } catch (e) {
+            console.error('Failed to sync tour status:', e);
+        }
+    };
+
     const handleStart = () => {
         setStatus('traveling');
+        syncTransition('traveling');
         onStartTour?.();
     };
 
     const handleSkip = () => {
         advanceStop();
+        syncAdvance();
         onSkipStop?.();
     };
 
     const handleArrive = () => {
         setStatus('poi');
+        syncTransition('poi');
     };
 
     const handleContinue = () => {
         advanceStop();
+        syncAdvance();
         setStatus('traveling');
+        syncTransition('traveling');
     };
 
     return (

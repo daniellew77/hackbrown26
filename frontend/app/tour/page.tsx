@@ -7,6 +7,8 @@ import { useTourStore, selectCurrentStop, selectProgressCurrent, selectProgressT
 import { useGeolocation } from '@/hooks/useGeolocation';
 import TourStatus from '@/components/TourStatus';
 import LocationSimulator from '@/components/LocationSimulator';
+import NarrationCard from '@/components/NarrationCard';
+import ChatInterface from '@/components/ChatInterface';
 import styles from './page.module.css';
 
 // Dynamic import for Map to avoid SSR issues with Mapbox
@@ -175,6 +177,8 @@ export default function TourPage() {
 
                 <aside className={styles.sidebar}>
                     <TourStatus />
+                    <NarrationCard />
+                    <ChatInterface />
 
                     {/* Location simulator for testing */}
                     <LocationSimulator />

@@ -57,6 +57,7 @@ export interface TourState {
 
     // Demo mode
     isDemoMode: boolean;
+    audioStopTrigger: number;
 }
 
 interface TourActions {
@@ -77,6 +78,9 @@ interface TourActions {
 
     // Narration
     setNarrating: (isNarrating: boolean, narration?: string) => void;
+
+    // Audio Control
+    stopAudio: () => void;
 
     // UI state
     setLoading: (isLoading: boolean) => void;
@@ -111,10 +115,16 @@ const initialState: TourState = {
     isNarrating: false,
     currentNarration: '',
     isDemoMode: false,
+    audioStopTrigger: 0,
 };
 
 export const useTourStore = create<TourState & TourActions>((set, get) => ({
     ...initialState,
+
+    // ... existing actions ...
+
+    // Audio Control
+    stopAudio: () => set((state) => ({ audioStopTrigger: state.audioStopTrigger + 1 })),
 
     // Preference actions
     setPreferences: (newPreferences) => set((state) => ({

@@ -3,7 +3,7 @@ Tour API Routes
 Endpoints for tour creation, management, and state updates.
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 from pydantic import BaseModel
 from typing import Optional
 import json
@@ -14,8 +14,43 @@ from services.routing import generate_route, get_walking_directions, check_poi_p
 
 router = APIRouter(tags=["tour"])
 
-# Global tour manager (in production, use dependency injection)
+from agents.narrator import NarratorAgent
+from agents.qa import QAAgent
+from agents.director import TourDirectorAgent
+from services.voice import VoiceService
+import re
+
+# ...
+
+def get_voice_for_tour(theme: str, personality: str) -> str:
+    """Deterministically select a voice based on tour parameters."""
+    theme = theme.lower()
+    personality = personality.lower()
+    
+    # Logic table
+    if 'ghost' in theme or 'creepy' in personality:
+        return voice_service.select_voice_id('female', 'ghost') # Autumn Veil for spooky/reflective
+    if 'history' in theme or 'serious' in personality:
+         # Use Quentin (narrator) or Jane (audiobook)
+         return voice_service.select_voice_id('male', 'history') 
+    if 'art' in theme:
+        return voice_service.select_voice_id('female', 'art') # Autumn Veil
+    if 'fun' in personality:
+        return voice_service.select_voice_id('male', 'fun') # Drew!
+        
+    # Default
+    return voice_service.select_voice_id('male', 'friendly') # Henry
+
 tour_manager = TourManager()
+narrator_agent = NarratorAgent()
+qa_agent = QAAgent()
+director_agent = TourDirectorAgent()
+voice_service = VoiceService()
+
+
+class ChatRequest(BaseModel):
+    """Request body for chat interactions."""
+    message: str
 
 
 class CreateTourRequest(BaseModel):
@@ -192,6 +227,168 @@ async def get_pois(theme: Optional[str] = None):
         return {"pois": pois, "count": len(pois)}
     except FileNotFoundError:
         return {"pois": [], "count": 0, "error": "POI data not found"}
+
+
+@router.post("/tour/{tour_id}/narrate")
+async def generate_narration(tour_id: str):
+    """Generate narration for the current stop or intro."""
+    tour = tour_manager.get_tour(tour_id)
+    if not tour:
+        raise HTTPException(status_code=404, detail="Tour not found")
+    
+    # CASE 1: Initial Intro (Before "Start Tour")
+    if tour.status == TourStatus.INITIAL:
+        # Check cache for intro
+        if tour.narration_progress.script_text and "Welcome" in tour.narration_progress.script_text:
+             return {"narration": tour.narration_progress.script_text, "cached": True}
+
+        intro = await narrator_agent.generate_intro(tour.preferences)
+        
+        # Update state
+        tour.conversation_history.append({"role": "assistant", "content": intro})
+        tour.narration_progress.script_text = intro
+        tour.narration_progress.current_stop_id = "INTRO"
+        
+        return {
+            "narration": intro,
+            "cached": False,
+            "intro": intro,
+            "poi": None
+        }
+
+    # CASE 2: POI Narration (When arrived)
+    if not tour.route.current_stop:
+        raise HTTPException(status_code=400, detail="No current stop")
+        
+    # Check if we already have narration for this stop
+    if tour.narration_progress.current_stop_id == tour.route.current_stop.id and tour.narration_progress.script_text:
+        return {"narration": tour.narration_progress.script_text, "cached": True}
+    
+    # Generate new narration (POI only, no intro)
+    narration = await narrator_agent.generate_poi_narration(
+        tour.route.current_stop, 
+        tour.preferences
+    )
+    
+    # Update state
+    tour.narration_progress.current_stop_id = tour.route.current_stop.id
+    tour.narration_progress.script_text = narration
+    tour.narration_progress.script_position = 0
+    tour.conversation_history.append({"role": "assistant", "content": narration})
+    
+    return {
+        "narration": narration,
+        "cached": False,
+        "intro": "",
+        "poi": tour.route.current_stop.name
+    }
+
+
+@router.post("/tour/{tour_id}/chat")
+async def chat(tour_id: str, request: ChatRequest):
+    """Handle user questions or replanning requests."""
+    tour = tour_manager.get_tour(tour_id)
+    if not tour:
+        raise HTTPException(status_code=404, detail="Tour not found")
+        
+    # Add user message to history
+    tour.conversation_history.append({"role": "user", "content": request.message})
+    
+    # 1. Classify Intent
+    intent = await qa_agent.classify_intent(request.message)
+    print(f"🧠 User Intent: {intent}")
+    
+    # 2. Handle based on intent
+    if "REPLAN" in intent:
+        # 🗺️ Actually replan the route!
+        print("🔄 Initiating replanning...")
+        replan_result = await director_agent.replan_route(tour, request.message)
+        
+        answer = replan_result["message"]
+        
+        # If we found new places, format them nicely
+        if replan_result.get("new_stops"):
+            stops_text = "\n".join([
+                f"• {p['name']} ({p.get('rating', 'N/A')}⭐) - {p.get('address', '')[:50]}"
+                for p in replan_result["new_stops"]
+            ])
+            answer += f"\n\nHere are some options:\n{stops_text}\n\nWould you like to visit one of these?"
+        
+        # Handle skip action
+        if replan_result.get("skipped"):
+            # Actually advance to next stop
+            tour.route.advance()
+            answer += f" Next up: {tour.route.current_stop.name if tour.route.current_stop else 'Tour complete!'}"
+        
+        return_data = {
+            "reply": answer,
+            "intent": "replan",
+            "replan_result": replan_result,
+            "history_length": len(tour.conversation_history)
+        }
+    else:
+        # Normal Q&A
+        answer = await qa_agent.answer_question(
+            question=request.message,
+            current_stop=tour.route.current_stop,
+            preferences=tour.preferences,
+            history=tour.conversation_history
+        )
+        return_data = {
+            "reply": answer,
+            "intent": "chat",
+            "history_length": len(tour.conversation_history)
+        }
+    
+    # Add assistant response to history
+    tour.conversation_history.append({"role": "assistant", "content": answer})
+    
+    return return_data
+
+
+
+class AudioRequest(BaseModel):
+    text: str
+
+
+@router.post("/tour/{tour_id}/audio")
+async def generate_tour_audio(tour_id: str, request: AudioRequest):
+    """Generate audio for the given text."""
+    tour = tour_manager.get_tour(tour_id)
+    if not tour:
+        raise HTTPException(status_code=404, detail="Tour not found")
+
+    # Select dynamic voice based on tour "Character"
+    voice_id = get_voice_for_tour(
+        tour.preferences.theme.value, 
+        tour.preferences.guide_personality.value
+    )
+
+    # Check Cache
+    import hashlib
+    text_hash = hashlib.md5(f"{request.text}-{voice_id}".encode()).hexdigest()
+    
+    if text_hash in tour.audio_cache:
+        print("✅ Cache Hit: Returning saved audio.")
+        return Response(content=tour.audio_cache[text_hash], media_type="audio/mpeg")
+
+    # Generate audio
+    audio_bytes = await voice_service.generate_audio(
+        request.text, 
+        tour.preferences.guide_personality.value, 
+        voice_id=voice_id
+    )
+    
+    if not audio_bytes:
+        raise HTTPException(status_code=500, detail="Failed to generate audio")
+        
+    # Store in Cache
+    tour.audio_cache[text_hash] = audio_bytes
+    
+    if not audio_bytes:
+        raise HTTPException(status_code=500, detail="Failed to generate audio")
+        
+    return Response(content=audio_bytes, media_type="audio/mpeg")
 
 
 @router.delete("/tour/{tour_id}")
