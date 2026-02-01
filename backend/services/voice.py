@@ -10,13 +10,12 @@ load_dotenv()
 # Expanded Voice Library with Metadata (Standard IDs for Free Tier)
 VOICE_LIBRARY = {
     # Female Voices
-    'autumn': {'id': 'EXAVITQu4vr4xnSDxMaL', 'gender': 'female', 'style': 'emotional', 'tags': ['art', 'warm', 'reflective', 'ghost']}, # Bella (Soft)
-    'jane': {'id': '21m00Tcm4TlvDq8ikWAM', 'gender': 'female', 'style': 'professional', 'tags': ['history', 'audiobook', 'educational']}, # Rachel (Clear)
-    
+    'autumn': {'id': 'pFZP5JQG7iQjIQuC4Bku', 'gender': 'female', 'style': 'emotional', 'tags': ['art', 'warm', 'reflective', 'ghost']}, # Lily
+
     # Male Voices
     'henry': {'id': 'TxGEqnHWrfWFTfGW9XjX', 'gender': 'male', 'style': 'soft', 'tags': ['friendly', 'soothing', 'professional']}, # Josh (Deep)
-    'quentin': {'id': 'ErXwobaYiN019PkySvjV', 'gender': 'male', 'style': 'well-rounded', 'tags': ['educational', 'narrator', 'history']}, # Antoni (Narrator)
-    'drew': {'id': '29vD33N1CtxCmqQRPOHJ', 'gender': 'male', 'style': 'energetic', 'tags': ['fun', 'romantic', 'comedy']}, # Drew (Standard)
+    'quentin': {'id': 'onwK4e9ZLuTAKqWW03F9', 'gender': 'male', 'style': 'well-rounded', 'tags': ['educational', 'narrator', 'history']}, # Antoni (Narrator)
+    'drew': {'id': 'iP95p4xoKVk53GoZ742B', 'gender': 'male', 'style': 'energetic', 'tags': ['fun', 'romantic', 'comedy']}, # Drew (Standard)
 }
 
 

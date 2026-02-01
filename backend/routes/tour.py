@@ -29,9 +29,9 @@ def get_voice_for_tour(theme: str, personality: str) -> str:
     # Explicit Character -> Voice ID mapping (bypasses fuzzy logic)
     CHARACTER_VOICE_MAP = {
         'henry': 'TxGEqnHWrfWFTfGW9XjX',    # Josh (Friendly Local)
-        'quentin': 'ErXwobaYiN019PkySvjV',  # Antoni (Professor)
-        'drew': '29vD33N1CtxCmqQRPOHJ',      # Drew (Explorer)
-        'autumn': 'EXAVITQu4vr4xnSDxMaL',    # Bella (Storyteller)
+        'quentin': 'onwK4e9ZLuTAKqWW03F9',  # Daniel (Professor)
+        'drew': 'iP95p4xoKVk53GoZ742B',      # Chris (Explorer)
+        'autumn': 'pFZP5JQG7iQjIQuC4Bku',    # Lily (Storyteller)
     }
 
     if personality in CHARACTER_VOICE_MAP:
@@ -278,26 +278,6 @@ async def generate_narration(tour_id: str):
             "cached": False,
             "intro": intro,
             "poi": None
-        }
-
-    # CASE 3: Tour Complete (Outro)
-    if tour.status == TourStatus.COMPLETE:
-        # Check cache
-        if tour.narration_progress.script_text and "farewell" in tour.narration_progress.current_stop_id:
-             return {"narration": tour.narration_progress.script_text, "cached": True}
-
-        outro = await narrator_agent.generate_outro(tour.preferences)
-        
-        # Update state
-        tour.conversation_history.append({"role": "assistant", "content": outro})
-        tour.narration_progress.script_text = outro
-        tour.narration_progress.current_stop_id = "farewell"
-        
-        return {
-            "narration": outro,
-            "cached": False,
-            "intro": "",
-            "poi": "Tour Complete"
         }
 
     # CASE 2: POI Narration (When arrived)
