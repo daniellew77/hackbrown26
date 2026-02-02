@@ -1,3 +1,5 @@
 .env
 frontend/.env.local
 backend/.env.local
+.DS_Store
+tour_guide_hackathon_plan.md
